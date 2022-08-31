@@ -17,18 +17,6 @@ canvas.width      = 1024;
 canvas.height     = 768;
 canvas.clearColor = 'rgb(28,26,26)';
 
-/*
-window.addEventListener('resize', () => {
-    canvas.width  = window.innerWidth;
-    canvas.height = window.innerHeight * 0.85;
-    canvas.resize();
-});
-*/
-
-
-let refreshTimout = (1000 / 30) | 0;
-
-
 const universe  = new Universe(canvas);
 const camera    = new Camera(universe);
 universe.player = new Player(universe);
