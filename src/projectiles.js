@@ -144,7 +144,8 @@ class Projectile extends Entities.Entity
     {
         this.player.universe.canvas.strokeRect(
             new Vec2(this.position.x, -this.position.y),
-            Vec2.fromScalar(1)
+            Vec2.fromScalar(1),
+            'rgb(225,165,34)'
         );
     }
 }

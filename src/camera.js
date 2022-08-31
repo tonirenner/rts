@@ -30,7 +30,7 @@ class Viewport
 
     update()
     {
-        const origin = this.origin.offset.multiplyScalar(-1)
+        const origin = this.origin.offset.multiplyScalar(-1);
 
         this.bounds2d.min = origin.subtract(this.halfDimension.divideScalar(this.origin.scale));
         this.bounds2d.max = origin.add(this.halfDimension.divideScalar(this.origin.scale));

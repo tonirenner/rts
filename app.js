@@ -6,6 +6,7 @@ import GraphicsDevice from './src/graphics.device.js';
 import LaserTurret from './src/turrets/laser.js';
 import Formations from './src/formations.js';
 import Camera from './src/camera.js';
+import Stars from './src/stars.js';
 
 const debug = document.querySelector('.app > .debug');
 
@@ -13,6 +14,7 @@ const formation = new Formations.SquareFormation;
 const canvas    = new GraphicsDevice.Canvas(document.querySelector('.app > canvas'));
 canvas.width    = 1024;
 canvas.height   = 768;
+canvas.clearColor = 'rgb(59,54,54)'
 
 /*
 window.addEventListener('resize', () => {
@@ -37,12 +39,14 @@ universe.players.push(enemyPlayer);
 const yourVessel = new Vessels.AttackVessel(universe.player);
 yourVessel.mountTurret(new Turrets.Turret(universe.player));
 yourVessel.mountTurret(new LaserTurret(universe.player));
+yourVessel.position.x = -100;
+yourVessel.position.y = -200;
 
 const yourVessel2 = new Vessels.AttackVessel(universe.player);
 yourVessel2.mountTurret(new Turrets.Turret(universe.player));
 yourVessel2.mountTurret(new LaserTurret(universe.player));
 yourVessel2.position.x = 100;
-yourVessel2.position.y = -100;
+yourVessel2.position.y = -200;
 
 const enemyVessel = new Vessels.AttackVessel(enemyPlayer);
 enemyVessel.mountTurret(new Turrets.Turret(enemyPlayer));
@@ -52,6 +56,9 @@ enemyVessel.position.y = 200;
 universe.player.units.add(yourVessel);
 universe.player.units.add(yourVessel2);
 enemyPlayer.units.add(enemyVessel);
+
+
+universe.entities.add(new Stars.Star(universe.player));
 
 universe.debug = false;
 

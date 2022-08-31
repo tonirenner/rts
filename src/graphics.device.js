@@ -70,12 +70,10 @@ class Canvas
 
     clear()
     {
-        this.context.fillStyle = this.clearColor;
-        this.context.fillRect(
-            -this.halfScreenWidth,
-            -this.halfScreenHeight,
-            this.screenWidth,
-            this.screenHeight
+        this.fillRect(
+            new Vec2(-this.halfScreenWidth, -this.halfScreenHeight),
+            new Vec2(this.screenWidth, this.screenHeight),
+            this.clearColor
         );
     }
 
@@ -202,6 +200,19 @@ class Canvas
         this.context.moveTo(from.x, from.y);
         this.context.lineTo(to.x, to.y);
         this.context.stroke();
+    }
+
+    /**
+     * @param {CanvasImageSource|*} image
+     * @param {Vec2} position
+     */
+    drawImage(image, position)
+    {
+        this.context.drawImage(
+            image,
+            (position.x - image.width * 0.5) | 0,
+            (position.y - image.height * 0.5) | 0
+        );
     }
 }
 

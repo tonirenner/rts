@@ -135,11 +135,12 @@ export class Universe
 
     render()
     {
-        this.player.units.render();
+        this.entities.render();
+
         for (let i in this.players) {
             this.players[i].units.render();
         }
 
-        this.entities.render();
+        this.player.units.render();
     }
 }
