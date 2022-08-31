@@ -7,14 +7,15 @@ import LaserTurret from './src/turrets/laser.js';
 import Formations from './src/formations.js';
 import Camera from './src/camera.js';
 import Stars from './src/stars.js';
+import Planets from './src/planets.js';
 
 const debug = document.querySelector('.app > .debug');
 
-const formation = new Formations.SquareFormation;
-const canvas    = new GraphicsDevice.Canvas(document.querySelector('.app > canvas'));
-canvas.width    = 1024;
-canvas.height   = 768;
-canvas.clearColor = 'rgb(59,54,54)'
+const formation   = new Formations.SquareFormation;
+const canvas      = new GraphicsDevice.Canvas(document.querySelector('.app > canvas'));
+canvas.width      = 1024;
+canvas.height     = 768;
+canvas.clearColor = 'rgb(28,26,26)';
 
 /*
 window.addEventListener('resize', () => {
@@ -39,13 +40,13 @@ universe.players.push(enemyPlayer);
 const yourVessel = new Vessels.AttackVessel(universe.player);
 yourVessel.mountTurret(new Turrets.Turret(universe.player));
 yourVessel.mountTurret(new LaserTurret(universe.player));
-yourVessel.position.x = -100;
-yourVessel.position.y = -200;
+yourVessel.position.x = 150;
+yourVessel.position.y = -225;
 
 const yourVessel2 = new Vessels.AttackVessel(universe.player);
 yourVessel2.mountTurret(new Turrets.Turret(universe.player));
 yourVessel2.mountTurret(new LaserTurret(universe.player));
-yourVessel2.position.x = 100;
+yourVessel2.position.x = 200;
 yourVessel2.position.y = -200;
 
 const enemyVessel = new Vessels.AttackVessel(enemyPlayer);
@@ -57,18 +58,33 @@ universe.player.units.add(yourVessel);
 universe.player.units.add(yourVessel2);
 enemyPlayer.units.add(enemyVessel);
 
-
-universe.entities.add(new Stars.Star(universe.player));
+const star        = new Stars.Star(universe.player);
+const planet      = new Planets.Planet(universe.player);
+planet.position.x = 200;
+planet.position.y = 300;
+universe.entities.add(star);
+universe.entities.add(planet);
 
 universe.debug = false;
 
 canvas.resize();
-loop();
 
-function loop()
+let lastFrameTimestamp = 0;
+let delta              = 0;
+let updateSteps        = 0;
+let fps                = 0;
+let framesThisSecond   = 0;
+let lastFPSUpdate      = 0;
+
+const fpsCut             = 30;
+const fpsMillisecondsCut = 1000 / fpsCut;
+const timestep           = 1000 / 60;
+
+
+requestAnimationFrame(loop);
+
+function draw()
 {
-    universe.update();
-
     canvas.save();
     canvas.clear();
 
@@ -76,21 +92,58 @@ function loop()
     universe.render();
 
     canvas.restore();
-
-    info(universe);
-
-    setTimeout(loop, refreshTimout);
 }
+
+
+function loop(timestamp)
+{
+    if (timestamp < lastFrameTimestamp + fpsMillisecondsCut) {
+        requestAnimationFrame(loop);
+        return;
+    }
+
+    if (timestamp > lastFPSUpdate + 1000) {
+        fps = 0.25 * framesThisSecond + (1 - 0.25) * fps;
+
+        lastFPSUpdate    = timestamp;
+        framesThisSecond = 0;
+    }
+    framesThisSecond++;
+
+    delta += timestamp - lastFrameTimestamp;
+    lastFrameTimestamp = timestamp;
+
+    updateSteps = 0;
+    while (delta >= timestep) {
+        universe.update();
+        delta -= timestep;
+        if (updateSteps > 20) {
+            console.log('in');
+            delta = 0;
+            break;
+        }
+        updateSteps++;
+    }
+
+    draw();
+    info(universe);
+    requestAnimationFrame(loop);
+}
+
 
 /**
  * @param {Universe} universe
  */
 function info(universe)
 {
-    const origin    = universe.origin;
-    debug.innerText = 'scale: ' + origin.scale + '\n    mouse: ' +
-                      JSON.stringify(origin.currentPointerLocation) + '\n    offset: ' +
-                      JSON.stringify(origin.offset) + '\n  ';
+
+
+    debug.innerText = `
+    scale: ${universe.origin.scale}
+    mouse: ${JSON.stringify(universe.origin.currentPointerLocation)}
+    offset: ${JSON.stringify(universe.origin.offset)}
+    fps: ${Math.round(fps)}
+    `;
 }
 
 document.oncontextmenu = e => {

@@ -120,17 +120,17 @@ class LaserBeamProjectile extends Projectiles.Projectile
 
     damageToShields()
     {
-        return 2;
+        return 0.5;
     }
 
     damageToArmor()
     {
-        return 4;
+        return 2;
     }
 
     damageToHull()
     {
-        return 8;
+        return 6;
     }
 
     /**
@@ -165,7 +165,7 @@ export default class LaserTurret extends Turrets.Turret
      */
     minCoolDown()
     {
-        return 80;
+        return 240;
     }
 
     /**
@@ -173,7 +173,7 @@ export default class LaserTurret extends Turrets.Turret
      */
     minBeamDuration()
     {
-        return 8;
+        return 30;
     }
 
     /**

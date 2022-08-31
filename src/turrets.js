@@ -112,7 +112,7 @@ class Turret extends Entities.Entity
      */
     minCoolDown()
     {
-        return 30;
+        return 160;
     }
 
     /**

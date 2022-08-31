@@ -236,8 +236,8 @@ class MoveState extends States.State
             return;
         }
 
-        let velocityX = Math.ceil((this.destination.x - entity.position.x)) / 10;
-        let velocityY = Math.ceil((this.destination.y - entity.position.y)) / 10;
+        let velocityX = Math.ceil(this.destination.x - entity.position.x) / 10;
+        let velocityY = Math.ceil(this.destination.y - entity.position.y) / 10;
 
         entity.position.x += velocityX;
         entity.position.y += velocityY;

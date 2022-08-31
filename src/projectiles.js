@@ -62,8 +62,8 @@ class TravelState extends States.State
 
         const distance = Distance.simple(entity.position, this.destination);
 
-        let velocityX = (this.destination.x - entity.position.x) / distance * this.velocity;
-        let velocityY = (this.destination.y - entity.position.y) / distance * this.velocity;
+        let velocityX = Math.ceil(this.destination.x - entity.position.x) / distance * this.velocity;
+        let velocityY = Math.ceil(this.destination.y - entity.position.y) / distance * this.velocity;
 
         entity.position.x += velocityX | 0;
         entity.position.y += velocityY | 0;
@@ -137,7 +137,7 @@ class Projectile extends Entities.Entity
      */
     travelDirection(destination)
     {
-        this.state = new TravelState(destination, 10, 50);
+        this.state = new TravelState(destination, 5, 100);
     }
 
     render()
