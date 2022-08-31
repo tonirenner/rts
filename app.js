@@ -77,8 +77,8 @@ let framesThisSecond   = 0;
 let lastFPSUpdate      = 0;
 
 const fpsCut             = 30;
-const fpsMillisecondsCut = 1000 / fpsCut;
-const timestep           = 1000 / 60;
+const fpsMillisecondsCut = (1000 / fpsCut) | 0;
+const timeStep           = (1000 / 60) | 0;
 
 
 requestAnimationFrame(loop);
@@ -102,27 +102,26 @@ function loop(timestamp)
         return;
     }
 
+    delta += timestamp - lastFrameTimestamp;
+    lastFrameTimestamp = timestamp;
+
     if (timestamp > lastFPSUpdate + 1000) {
-        fps = 0.25 * framesThisSecond + (1 - 0.25) * fps;
+        fps = 0.25 * framesThisSecond + 0.75 * fps;
 
         lastFPSUpdate    = timestamp;
         framesThisSecond = 0;
     }
     framesThisSecond++;
 
-    delta += timestamp - lastFrameTimestamp;
-    lastFrameTimestamp = timestamp;
 
     updateSteps = 0;
-    while (delta >= timestep) {
+    while (delta >= timeStep) {
         universe.update();
-        delta -= timestep;
-        if (updateSteps > 20) {
-            console.log('in');
+        delta -= timeStep;
+        if (++updateSteps > 20) {
             delta = 0;
             break;
         }
-        updateSteps++;
     }
 
     draw();
