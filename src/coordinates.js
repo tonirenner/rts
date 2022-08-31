@@ -142,7 +142,7 @@ export class FloatingOrigin
     /**
      * @type {number}
      */
-    minScale        = 0.5;
+    minScale        = 0.3;
     /**
      * @type {number}
      */
