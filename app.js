@@ -8,6 +8,7 @@ import Formations from './src/formations.js';
 import Camera from './src/camera.js';
 import Stars from './src/stars.js';
 import Planets from './src/planets.js';
+import GameLoop from './src/loop.js';
 
 const debug = document.querySelector('.app > .debug');
 
@@ -57,81 +58,24 @@ universe.debug = false;
 
 canvas.resize();
 
-let lastFrameTimestamp = 0;
-let delta              = 0;
-let updateSteps        = 0;
-let fps                = 0;
-let framesThisSecond   = 0;
-let lastFPSUpdate      = 0;
-
-const fpsCut             = 30;
-const fpsMillisecondsCut = (1000 / fpsCut) | 0;
-const timeStep           = (1000 / 60) | 0;
-
-
-requestAnimationFrame(loop);
-
-function draw()
-{
+const gameLoop    = new GameLoop();
+gameLoop.onUpdate = () => universe.update();
+gameLoop.onDraw   = () => {
     canvas.save();
     canvas.clear();
-
     camera.transform();
     universe.render();
-
     canvas.restore();
-}
-
-
-function loop(timestamp)
-{
-    if (timestamp < lastFrameTimestamp + fpsMillisecondsCut) {
-        requestAnimationFrame(loop);
-        return;
-    }
-
-    delta += timestamp - lastFrameTimestamp;
-    lastFrameTimestamp = timestamp;
-
-    if (timestamp > lastFPSUpdate + 1000) {
-        fps = 0.25 * framesThisSecond + 0.75 * fps;
-
-        lastFPSUpdate    = timestamp;
-        framesThisSecond = 0;
-    }
-    framesThisSecond++;
-
-
-    updateSteps = 0;
-    while (delta >= timeStep) {
-        universe.update();
-        delta -= timeStep;
-        if (++updateSteps > 20) {
-            delta = 0;
-            break;
-        }
-    }
-
-    draw();
-    info(universe);
-    requestAnimationFrame(loop);
-}
-
-
-/**
- * @param {Universe} universe
- */
-function info(universe)
-{
-
+};
+gameLoop.onStats  = () => {
 
     debug.innerText = `
     scale: ${universe.origin.scale}
-    mouse: ${JSON.stringify(universe.origin.currentPointerLocation)}
+    mouse: ${JSON.stringify(camera.screenToWorld(universe.origin.currentPointerLocation))}
     offset: ${JSON.stringify(universe.origin.offset)}
-    fps: ${Math.round(fps)}
+    fps: ${Math.round(gameLoop.fps)}
     `;
-}
+};
 
 document.oncontextmenu = e => {
     e.preventDefault();
@@ -207,3 +151,5 @@ canvas.addEventListener('click', e => {
         }
     }
 });
+
+gameLoop.start();

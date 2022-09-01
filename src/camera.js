@@ -78,8 +78,6 @@ class Viewport
      */
     screenToWorld(coordinates)
     {
-        console.log(this.bounds2d.max);
-
         return coordinates.divideScalar(this.origin.scale).subtract(this.bounds2d.max).multiply(new Vec2(1, -1));
     }
 
@@ -179,7 +177,7 @@ export default class Camera
 
         const rect = this.universe.canvas.getBoundingClientRect();
 
-        this.universe.origin.updatePointerLocation(
+        this.universe.origin.pointAt(
             new Vec2(rect.left, rect.top),
             new Vec2(e.pageX, e.pageY)
         );
@@ -189,7 +187,7 @@ export default class Camera
 
     onOriginOffsetHasChanged()
     {
-        this.universe.origin.computeOffset();
+        this.universe.origin.update();
     }
 
     onStartPan(e)
