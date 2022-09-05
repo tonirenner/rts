@@ -211,7 +211,7 @@ class Canvas
         this.context.drawImage(
             image,
             (position.x - image.width * 0.5) | 0,
-            (position.y - image.height * 0.5) | 0
+            (-position.y - image.height * 0.5) | 0
         );
     }
 }

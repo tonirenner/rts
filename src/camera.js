@@ -177,7 +177,7 @@ export default class Camera
 
         const rect = this.universe.canvas.getBoundingClientRect();
 
-        this.universe.origin.pointAt(
+        this.universe.origin.move(
             new Vec2(rect.left, rect.top),
             new Vec2(e.pageX, e.pageY)
         );

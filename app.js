@@ -9,6 +9,7 @@ import Camera from './src/camera.js';
 import Stars from './src/stars.js';
 import Planets from './src/planets.js';
 import GameLoop from './src/loop.js';
+import {Synthesizer} from './src/audio.js';
 
 const debug = document.querySelector('.app > .debug');
 
@@ -18,9 +19,10 @@ canvas.width      = 1024;
 canvas.height     = 768;
 canvas.clearColor = 'rgb(28,26,26)';
 
-const universe  = new Universe(canvas);
-const camera    = new Camera(universe);
-universe.player = new Player(universe);
+const synthesizer = new Synthesizer();
+const universe    = new Universe(canvas);
+const camera      = new Camera(universe);
+universe.player   = new Player(universe);
 
 const enemyPlayer = new Player(universe);
 enemyPlayer.color = 'rgb(255,0,0)';
@@ -50,7 +52,7 @@ enemyPlayer.units.add(enemyVessel);
 const star        = new Stars.Star(universe.player);
 const planet      = new Planets.Planet(universe.player);
 planet.position.x = 200;
-planet.position.y = 300;
+planet.position.y = -300;
 universe.entities.add(star);
 universe.entities.add(planet);
 
@@ -90,12 +92,12 @@ canvas.addEventListener('mousedown', e => {
         });
         universe.player.selectedUnits.clear();
     }
-
 });
 
 canvas.addEventListener('click', e => {
-    const screenCoordinates = camera.screenCoordinates(e);
-    const worldCoordinates  = camera.screenToWorld(screenCoordinates);
+    e.preventDefault();
+
+    const worldCoordinates = camera.screenToWorld(camera.screenCoordinates(e));
 
     const unit = universe.player.units.findOneByCoordinates(worldCoordinates);
     if (unit) {
@@ -105,34 +107,34 @@ canvas.addEventListener('click', e => {
         return;
     }
 
+    if (universe.player.selectedUnits.length === 0) {
+        return;
+    }
+
     if (universe.player.selectedUnits.length < 2) {
         universe.dispatchCommand(
             new Commands.MoveCommand(universe.player.selectedUnits.at(0), worldCoordinates)
         );
-        console.log('unit move to position');
-        return;
-    }
+    } else {
+        const destinations = formation.computeDestinations(universe.player.selectedUnits, worldCoordinates);
+        for (let i in destinations) {
+            universe.dispatchCommand(
+                new Commands.MoveCommand(
+                    universe.player.selectedUnits.at(i),
+                    destinations[i]
+                )
+            );
+        }
 
-    const destinations = formation.computeDestinations(universe.player.selectedUnits, worldCoordinates);
-    for (let i in destinations) {
-        universe.dispatchCommand(
-            new Commands.MoveCommand(
-                universe.player.selectedUnits.at(i),
-                destinations[i]
-            )
-        );
     }
-
-    console.log('units move to position');
+    console.log('unit move to position');
+    synthesizer.play(Synthesizer.COMMANDS.movingToPosition);
 });
 
 canvas.addEventListener('click', e => {
+    e.preventDefault();
 
-    const screenCoordinates  = camera.screenCoordinates(e);
-    const worldCoordinates   = camera.screenToWorld(screenCoordinates);
-    const screenCoordinates2 = camera.worldToScreen(worldCoordinates);
-    console.log(screenCoordinates, worldCoordinates, screenCoordinates2);
-
+    const worldCoordinates = camera.screenToWorld(camera.screenCoordinates(e));
 
     let target;
 
@@ -145,6 +147,7 @@ canvas.addEventListener('click', e => {
         target = universe.players[i].units.findOneByCoordinates(worldCoordinates);
 
         if (target) {
+            synthesizer.play(Synthesizer.COMMANDS.targetConfirmed);
             universe.dispatchCommand(new Commands.LockOnTargetCommand(universe.player.selectedUnits, target));
             console.log('units lock on target');
             return;

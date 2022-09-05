@@ -142,11 +142,11 @@ export class FloatingOrigin
     /**
      * @type {number}
      */
-    minScale        = 0.3;
+    minScale        = 0.1;
     /**
      * @type {number}
      */
-    maxScale        = 5;
+    maxScale        = 50;
 
     /**
      * @param {Vec2} offset
@@ -172,19 +172,14 @@ export class FloatingOrigin
             return;
         }
 
-//        const lastPointerLocation = this.currentPointerLocation.divideScalar(this.scale);
-//        const newPointerLocation  = this.currentPointerLocation.divideScalar(newScale);
-//        this.offset = this.offset.add(lastPointerLocation.subtract(newPointerLocation));
-
         this.scale = newScale;
     }
-
 
     /**
      * @param {Vec2} cornerTopLeft
      * @param {Vec2} pointerLocation
      */
-    pointAt(cornerTopLeft, pointerLocation)
+    move(cornerTopLeft, pointerLocation)
     {
         this.lastPointerLocation    = this.currentPointerLocation;
         this.currentPointerLocation = pointerLocation.subtract(cornerTopLeft);

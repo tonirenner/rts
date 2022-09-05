@@ -108,12 +108,11 @@ class AttackVessel extends Vessel
         this.turrets.update();
     }
 
-
     render()
     {
         if (this.isSelected) {
             this.player.universe.canvas.strokeCenteredRect(
-                new Vec2(this.position.x, -this.position.y + 6),
+                new Vec2(this.position.x, -this.position.y + 5),
                 new Vec2(36, 48),
                 'rgba(113,239,85, 0.5)'
             );
@@ -125,9 +124,9 @@ class AttackVessel extends Vessel
             this.player.color
         );
 
-        this.shieldHealthBar(this.position);
-        this.armorHealthBar(this.position);
-        this.hullHealthBar(this.position);
+        this.shieldHealthBar(this.position, 12);
+        this.armorHealthBar(this.position, 15);
+        this.hullHealthBar(this.position, 18);
 
         if (this.player.universe.debug) {
             const bounds = this.bounds();
@@ -143,13 +142,14 @@ class AttackVessel extends Vessel
 
     /**
      * @param {Vec2} position
+     * @param {number} offset
      */
-    shieldHealthBar(position)
+    shieldHealthBar(position, offset)
     {
         const shieldHealthBarWidth = (this.computeShieldHealthRatio() * 20) | 0;
 
         this.player.universe.canvas.fillRect(
-            new Vec2(position.x - 10, -position.y + 12),
+            new Vec2(position.x - 10, -position.y + offset),
             new Vec2(shieldHealthBarWidth, 2),
             'rgb(50,50,250)'
         );
@@ -157,13 +157,14 @@ class AttackVessel extends Vessel
 
     /**
      * @param {Vec2} position
+     * @param {number} offset
      */
-    armorHealthBar(position)
+    armorHealthBar(position, offset)
     {
         const armorHealthBarWidth = (this.computeArmorHealthRatio() * 20) | 0;
 
         this.player.universe.canvas.fillRect(
-            new Vec2(position.x - 10, -position.y + 15),
+            new Vec2(position.x - 10, -position.y + offset),
             new Vec2(armorHealthBarWidth, 2),
             'rgb(130,130,141)'
         );
@@ -171,13 +172,14 @@ class AttackVessel extends Vessel
 
     /**
      * @param {Vec2} position
+     * @param {number} offset
      */
-    hullHealthBar(position)
+    hullHealthBar(position, offset)
     {
         const hullHealthBarWidth = (this.computeHullHealthRatio() * 20) | 0;
 
         this.player.universe.canvas.fillRect(
-            new Vec2(position.x - 10, -position.y + 18),
+            new Vec2(position.x - 10, -position.y + offset),
             new Vec2(hullHealthBarWidth, 2),
             'rgb(81,227,48)'
         );

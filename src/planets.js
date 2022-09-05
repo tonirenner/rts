@@ -2,6 +2,9 @@ import Entities from './entities.js';
 
 class Planet extends Entities.Unit
 {
+    /**
+     * @type {Image|*}
+     */
     image;
 
     /**

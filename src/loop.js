@@ -19,7 +19,7 @@ export default class GameLoop
     /**
      * @type {number}
      */
-    fps                = 0;
+    fps                = 60;
     /**
      * @type {number}
      */
