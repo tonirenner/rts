@@ -1,7 +1,7 @@
-import Entities from './entities.js';
-import States from './states.js';
-import Turrets from './turrets.js';
-import {Distance, Vec2} from './coordinates.js';
+import Entities from '../entities.js';
+import States from '../states.js';
+import Turrets from '../turrets/turrets.js';
+import {Distance, Vec2} from '../coordinates.js';
 
 class Vessel extends Entities.Unit
 {
@@ -218,6 +218,11 @@ class MoveState extends States.State
     destination;
 
     /**
+     * @type {Vec2}
+     */
+    velocity = new Vec2();
+
+    /**
      *
      * @param {Vec2} destination
      */
@@ -226,6 +231,8 @@ class MoveState extends States.State
         super();
 
         this.destination = destination;
+
+        console.log(this.velocity);
     }
 
     /**
@@ -233,16 +240,18 @@ class MoveState extends States.State
      */
     update(entity)
     {
-        if (Distance.simple(entity.position, this.destination) < 1) {
+        if (Distance.simple(entity.position, this.destination) < 5) {
             entity.state = new States.IdleState();
             return;
         }
 
-        let velocityX = Math.ceil(this.destination.x - entity.position.x) / 10;
-        let velocityY = Math.ceil(this.destination.y - entity.position.y) / 10;
+        const angle = entity.position.angle(this.destination);
 
-        entity.position.x += velocityX;
-        entity.position.y += velocityY;
+        this.velocity.x += Math.cos(angle) * 0.01;
+        this.velocity.y += Math.sin(angle) * 0.01;
+
+        entity.position.x += this.velocity.x;
+        entity.position.y += this.velocity.y;
     }
 
     /**

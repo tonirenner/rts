@@ -1,8 +1,8 @@
-import Entities from './entities.js';
-import States from './states.js';
-import Projectiles from './projectiles.js';
-import Vessels from './vessel.js';
-import Commands from './commands.js';
+import Entities from '../entities.js';
+import States from '../states.js';
+import Projectiles from '../projectiles.js';
+import Vessels from '../vessel/vessel.js';
+import Commands from '../commands.js';
 
 class IdleState extends States.IdleState
 {

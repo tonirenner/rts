@@ -1,4 +1,6 @@
-export class Synthesizer
+import Queue from './queue.js';
+
+class AudioPlayer
 {
     /**
      * @type {SpeechSynthesis}
@@ -18,7 +20,7 @@ export class Synthesizer
     /**
      * @param {SpeechSynthesisUtterance} message
      */
-    play(message)
+    message(message)
     {
         if (!(message instanceof SpeechSynthesisUtterance)) {
             throw new Error('message must be instance of SpeechSynthesisUtterance');
@@ -33,7 +35,19 @@ export class Synthesizer
     }
 }
 
-Synthesizer.COMMANDS = {
-    movingToPosition: new SpeechSynthesisUtterance('moving to position'),
-    targetConfirmed:  new SpeechSynthesisUtterance('target confirmed')
+
+class AudioQueue extends Queue
+{
+}
+
+const Audio = {
+    AudioQueue,
+    AudioPlayer,
+    COMMANDS: {
+        MOVING_TO_POSITION: new SpeechSynthesisUtterance('moving to position'),
+        TARGET_CONFIRMED:   new SpeechSynthesisUtterance('target confirmed')
+    }
 };
+
+export default Audio;
+

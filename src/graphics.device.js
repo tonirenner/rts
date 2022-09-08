@@ -132,10 +132,10 @@ class Canvas
     {
         this.context.strokeStyle = color;
         this.context.strokeRect(
-            position.x,
-            position.y,
-            dimension.x,
-            dimension.y
+            position.x | 0,
+            position.y | 0,
+            dimension.x | 0,
+            dimension.y | 0
         );
     }
 
@@ -164,10 +164,10 @@ class Canvas
     {
         this.context.fillStyle = color;
         this.context.fillRect(
-            position.x,
-            position.y,
-            dimension.x,
-            dimension.y
+            position.x | 0,
+            position.y | 0,
+            dimension.x | 0,
+            dimension.y | 0
         );
     }
 
@@ -197,8 +197,8 @@ class Canvas
         this.context.strokeStyle = color;
 
         this.context.beginPath();
-        this.context.moveTo(from.x, from.y);
-        this.context.lineTo(to.x, to.y);
+        this.context.moveTo(from.x | 0, from.y | 0);
+        this.context.lineTo(to.x | 0, to.y | 0);
         this.context.stroke();
     }
 

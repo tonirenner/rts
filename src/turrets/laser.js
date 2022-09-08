@@ -1,4 +1,4 @@
-import Turrets from '../turrets.js';
+import Turrets from '../turrets/turrets.js';
 import Projectiles from '../projectiles.js';
 import States from '../states.js';
 import Commands from '../commands.js';

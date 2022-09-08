@@ -15,8 +15,8 @@ export class Vec2
      */
     constructor(x = 0, y = 0)
     {
-        this.x = x | 0;
-        this.y = y | 0;
+        this.x = x;
+        this.y = y;
     }
 
     /**
@@ -26,6 +26,15 @@ export class Vec2
     static fromScalar(s)
     {
         return new Vec2(s, s);
+    }
+
+    /**
+     * @param {Vec2} v
+     * @returns {number}
+     */
+    angle(v)
+    {
+        return Math.atan2(v.y - this.y, v.x - this.x);
     }
 
     /**

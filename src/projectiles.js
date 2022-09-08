@@ -62,11 +62,14 @@ class TravelState extends States.State
 
         const distance = Distance.simple(entity.position, this.destination);
 
-        let velocityX = Math.ceil(this.destination.x - entity.position.x) / distance * this.velocity;
-        let velocityY = Math.ceil(this.destination.y - entity.position.y) / distance * this.velocity;
 
-        entity.position.x += velocityX | 0;
-        entity.position.y += velocityY | 0;
+        const angle = entity.position.angle(this.destination);
+
+        const ax = Math.cos(angle) * this.velocity;
+        const ay = Math.sin(angle) * this.velocity;
+
+        entity.position.x += ax;
+        entity.position.y += ay;
 
         if (distance < 2) {
             entity.player.dispatchCommand(new Commands.DestroyCommand(entity));

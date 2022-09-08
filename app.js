@@ -1,7 +1,7 @@
 import Commands from './src/commands.js';
-import Vessels from './src/vessel.js';
+import Vessels from './src/vessel/vessel.js';
 import {Player, Universe} from './src/universe.js';
-import Turrets from './src/turrets.js';
+import Turrets from './src/turrets/turrets.js';
 import GraphicsDevice from './src/graphics.device.js';
 import LaserTurret from './src/turrets/laser.js';
 import Formations from './src/formations.js';
@@ -9,7 +9,7 @@ import Camera from './src/camera.js';
 import Stars from './src/stars.js';
 import Planets from './src/planets.js';
 import GameLoop from './src/loop.js';
-import {Synthesizer} from './src/audio.js';
+import Audio from './src/audio.js';
 
 const debug = document.querySelector('.app > .debug');
 
@@ -19,10 +19,10 @@ canvas.width      = 1024;
 canvas.height     = 768;
 canvas.clearColor = 'rgb(28,26,26)';
 
-const synthesizer = new Synthesizer();
-const universe    = new Universe(canvas);
-const camera      = new Camera(universe);
-universe.player   = new Player(universe);
+
+const universe  = new Universe(canvas);
+const camera    = new Camera(universe);
+universe.player = new Player(universe);
 
 const enemyPlayer = new Player(universe);
 enemyPlayer.color = 'rgb(255,0,0)';
@@ -94,6 +94,8 @@ canvas.addEventListener('mousedown', e => {
     }
 });
 
+
+
 canvas.addEventListener('click', e => {
     e.preventDefault();
 
@@ -125,16 +127,7 @@ canvas.addEventListener('click', e => {
                 )
             );
         }
-
     }
-    console.log('unit move to position');
-    synthesizer.play(Synthesizer.COMMANDS.movingToPosition);
-});
-
-canvas.addEventListener('click', e => {
-    e.preventDefault();
-
-    const worldCoordinates = camera.screenToWorld(camera.screenCoordinates(e));
 
     let target;
 
@@ -147,12 +140,15 @@ canvas.addEventListener('click', e => {
         target = universe.players[i].units.findOneByCoordinates(worldCoordinates);
 
         if (target) {
-            synthesizer.play(Synthesizer.COMMANDS.targetConfirmed);
+            universe.dispatchAudio(Audio.COMMANDS.TARGET_CONFIRMED);
             universe.dispatchCommand(new Commands.LockOnTargetCommand(universe.player.selectedUnits, target));
+
             console.log('units lock on target');
             return;
         }
     }
+
+    universe.dispatchAudio(Audio.COMMANDS.MOVING_TO_POSITION);
 });
 
 gameLoop.start();

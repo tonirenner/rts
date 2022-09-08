@@ -1,4 +1,5 @@
 import {Vec2} from './coordinates.js';
+import Queue from './queue.js';
 
 class Command
 {
@@ -113,41 +114,15 @@ class DestroyCommand extends Command
     }
 }
 
-class Queue
+class CommandQueue extends Queue
 {
-    /**
-     * @type {{}}
-     */
-    commands = {};
-
-    /**
-     * @type {number}
-     */
-    head = 0;
-
-    /**
-     * @type {number}
-     */
-    tail = 0;
-
-    get length()
-    {
-        return this.tail - this.head;
-    }
-
-    get isEmpty()
-    {
-        return this.length === 0;
-    }
-
     /**
      * @param {Command} command
      */
     enqueue(command)
     {
         if (command instanceof Command) {
-            this.commands[this.tail] = command;
-            this.tail++;
+            super.enqueue(command);
             return;
         }
 
@@ -159,11 +134,7 @@ class Queue
      */
     dequeue()
     {
-        const item = this.commands[this.head];
-        delete this.commands[this.head];
-        this.head++;
-
-        return item;
+        return super.dequeue();
     }
 
     /**
@@ -171,12 +142,12 @@ class Queue
      */
     peek()
     {
-        return this.commands[this.head];
+        return super.peek();
     }
 }
 
 const Commands = {
-    Queue,
+    CommandQueue,
     Command,
     MoveCommand,
     LockOnTargetCommand,

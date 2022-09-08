@@ -2,6 +2,7 @@ import Entities from './entities.js';
 import Commands from './commands.js';
 import {EntityCommandDispatcher, UnitCommandDispatcher} from './command.dispatcher.js';
 import {FloatingOrigin, Vec2} from './coordinates.js';
+import Audio from './audio.js';
 
 export class Player
 {
@@ -42,6 +43,14 @@ export class Player
     {
         this.universe.dispatchCommand(command);
     }
+
+    /**
+     * @param {any} audio
+     */
+    dispatchAudio(audio)
+    {
+        this.universe.dispatchAudio(audio);
+    }
 }
 
 export class Universe
@@ -49,10 +58,20 @@ export class Universe
     entityCommandDispatcher = new EntityCommandDispatcher();
     unitCommandDispatcher   = new UnitCommandDispatcher();
 
-    /**
-     * @type {Queue|*}
+    /**+
+     * @type {AudioPlayer|*}
      */
-    commandQueue = new Commands.Queue();
+    audioPlayer = new Audio.AudioPlayer();
+
+    /**
+     * @type {AudioQueue|*}
+     */
+    audioQueue = new Audio.AudioQueue();
+
+    /**
+     * @type {CommandQueue|*}
+     */
+    commandQueue = new Commands.CommandQueue();
 
     /**
      * @type {FloatingOrigin}
@@ -101,8 +120,20 @@ export class Universe
         this.commandQueue.enqueue(command);
     }
 
+    /**
+     * @param {any} audio
+     */
+    dispatchAudio(audio)
+    {
+        this.audioQueue.enqueue(audio);
+    }
+
     update()
     {
+        while (!this.audioQueue.isEmpty) {
+            this.audioPlayer.message(this.audioQueue.dequeue());
+        }
+
         let command;
         while (!this.commandQueue.isEmpty) {
             command = this.commandQueue.dequeue();
@@ -135,12 +166,14 @@ export class Universe
 
     render()
     {
+        this.entities.render();
+
         for (let i in this.players) {
             this.players[i].units.render();
         }
 
         this.player.units.render();
 
-        this.entities.render();
+
     }
 }
