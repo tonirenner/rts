@@ -194,7 +194,7 @@ export class FloatingOrigin
         this.currentPointerLocation = pointerLocation.subtract(cornerTopLeft);
     }
 
-    update()
+    pan()
     {
         const deltaPointerLocation = this.currentPointerLocation
                                          .subtract(this.lastPointerLocation)

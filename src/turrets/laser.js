@@ -1,5 +1,5 @@
 import Turrets from '../turrets/turrets.js';
-import Projectiles from '../projectiles.js';
+import Projectiles from '../turrets/projectiles.js';
 import States from '../states.js';
 import Commands from '../commands.js';
 import {Vec2} from '../coordinates.js';
@@ -92,11 +92,9 @@ class BeamState extends States.State
      */
     lookupHit(entity)
     {
-        const destination = this.destination.multiplyScalar(entity.player.universe.origin.scale);
-
         let hit;
         for (let i in entity.player.universe.players) {
-            hit = entity.player.universe.players[i].units.findOneByCoordinates(destination);
+            hit = entity.player.universe.players[i].units.findOneByCoordinates(this.destination);
             if (hit) {
                 return hit;
             }

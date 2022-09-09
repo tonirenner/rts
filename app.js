@@ -56,7 +56,7 @@ planet.position.y = -300;
 universe.entities.add(star);
 universe.entities.add(planet);
 
-universe.debug = true;
+universe.debug = false;
 
 canvas.resize();
 
@@ -99,7 +99,6 @@ canvas.addEventListener('click', e => {
     e.preventDefault();
 
     const worldCoordinates = camera.screenToWorld(camera.screenCoordinates(e));
-                                   //.multiplyScalar(universe.origin.scale);
 
     const unit = universe.player.units.findOneByCoordinates(worldCoordinates);
     if (unit) {

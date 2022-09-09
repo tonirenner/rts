@@ -179,7 +179,7 @@ export default class Camera
 
         this.universe.origin.move(
             new Vec2(rect.left, rect.top),
-            new Vec2(e.pageX, e.pageY)
+            new Vec2(e.clientX, e.clientY)
         );
 
         this.viewport.update();
@@ -187,7 +187,7 @@ export default class Camera
 
     onOriginOffsetHasChanged()
     {
-        this.universe.origin.update();
+        this.universe.origin.pan();
     }
 
     onStartPan(e)

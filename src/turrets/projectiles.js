@@ -1,7 +1,7 @@
-import Entities from './entities.js';
-import States from './states.js';
-import Commands from './commands.js';
-import {Distance, Vec2} from './coordinates.js';
+import Entities from '../entities.js';
+import States from '../states.js';
+import Commands from '../commands.js';
+import {Distance, Vec2} from '../coordinates.js';
 
 class TravelState extends States.State
 {
@@ -91,11 +91,9 @@ class TravelState extends States.State
      */
     lookupHit(entity)
     {
-        const position = entity.projectedPosition();
-
         let hit;
         for (let i in entity.player.universe.players) {
-            hit = entity.player.universe.players[i].units.findOneByCoordinates(position);
+            hit = entity.player.universe.players[i].units.findOneByCoordinates(entity.position);
             if (hit) {
                 return hit;
             }

@@ -43,10 +43,10 @@ class Entity
      */
     bounds()
     {
-        const halfDimension = 9 * this.player.universe.origin.scale;
+        const halfDimension = 9;// * this.player.universe.origin.scale;
 
-        this.bounds2d.min = this.projectedPosition().subtractScalar(halfDimension);
-        this.bounds2d.max = this.projectedPosition().addScalar(halfDimension);
+        this.bounds2d.min = this.position.subtractScalar(halfDimension);
+        this.bounds2d.max = this.position.addScalar(halfDimension);
 
         return this.bounds2d;
     }

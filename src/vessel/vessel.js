@@ -3,6 +3,7 @@ import States from '../states.js';
 import Turrets from '../turrets/turrets.js';
 import {Distance, Vec2} from '../coordinates.js';
 import GraphicsDevice from '../graphics.device.js';
+import {HealthBar} from '../drawable/indicator.js';
 
 class Vessel extends Entities.Unit
 {
@@ -50,6 +51,11 @@ class AttackVessel extends Vessel
     /**
      * @type {GraphicsDevice.Rectangle|*}
      */
+    ship;
+
+    /**
+     * @type {GraphicsDevice.Rectangle|*}
+     */
     box;
 
     /**
@@ -64,7 +70,15 @@ class AttackVessel extends Vessel
         this.hullHealth   = this.maxHullHealth();
         this.turrets      = new Turrets.TurretGroup(player);
 
-        this.box = new GraphicsDevice.Rectangle();
+        this.ship      = new GraphicsDevice.Rectangle();
+        this.box       = new GraphicsDevice.Rectangle();
+        this.shieldBar = new HealthBar(this.maxShieldHealth(), new Vec2(-10, -12));
+        this.armorBar  = new HealthBar(this.maxArmorHealth(), new Vec2(-10, -15));
+        this.hullBar   = new HealthBar(this.maxHullHealth(), new Vec2(-10, -18));
+
+        this.box.color      = 'rgba(113,239,85, 0.5)';
+        this.armorBar.color = 'rgb(130,130,141)';
+        this.hullBar.color  = 'rgb(81,227,48)';
     }
 
     /**
@@ -118,103 +132,52 @@ class AttackVessel extends Vessel
 
     render()
     {
+        const scale    = this.player.universe.origin.scale;
+        const position = this.position.clone();
+
         if (this.isSelected) {
-            this.player.universe.canvas.strokeCenteredRect(
-                new Vec2(this.position.x, this.position.y - 5),
-                new Vec2(36, 48),
-                'rgba(113,239,85, 0.5)'
-            );
+            this.box.position.x  = position.x;
+            this.box.position.y  = position.y - 5;
+            this.box.dimension.x = 36;
+            this.box.dimension.y = 48;
+            this.box.scale(scale);
+            this.player.universe.canvas.drawRectangleCentered(this.box);
         }
 
-        this.box.position  = this.projectedPosition();
-        this.box.dimension = Vec2.fromScalar(20);
-        this.box.color     = this.player.color;
-        this.box.scale(this.player.universe.origin.scale);
-        this.player.universe.canvas.drawRectangleCentered(this.box);
+        this.ship.position  = position.clone();
+        this.ship.dimension = Vec2.fromScalar(20);
+        this.ship.color     = this.player.color;
 
-        this.shieldHealthBar(this.position, 12);
-        this.armorHealthBar(this.position, 15);
-        this.hullHealthBar(this.position, 18);
+        this.shieldBar.position = position.clone();
+        this.armorBar.position  = position.clone();
+        this.hullBar.position   = position.clone();
+        this.shieldBar.health   = this.shieldHealth;
+        this.armorBar.health    = this.armorHealth;
+        this.hullBar.health     = this.hullHealth;
+
+        this.shieldBar.update();
+        this.armorBar.update();
+        this.hullBar.update();
+        this.ship.scale(scale);
+        this.shieldBar.scale(scale);
+        this.armorBar.scale(scale);
+        this.hullBar.scale(scale);
+
+        this.player.universe.canvas.drawRectangleCentered(this.ship);
+        this.player.universe.canvas.drawRectangle(this.shieldBar);
+        this.player.universe.canvas.drawRectangle(this.armorBar);
+        this.player.universe.canvas.drawRectangle(this.hullBar);
 
         if (this.player.universe.debug) {
             const bounds = this.bounds();
             this.player.universe.canvas.strokeCenteredRect(
-                new Vec2(bounds.center.x, bounds.center.y),
-                bounds.dimension,
+                bounds.center.multiplyScalar(scale),
+                bounds.dimension.multiplyScalar(scale),
                 'rgb(149,73,176)'
             );
         }
 
         this.state.render(this);
-    }
-
-    /**
-     * @param {Vec2} position
-     * @param {number} offset
-     */
-    shieldHealthBar(position, offset)
-    {
-        const shieldHealthBarWidth = (this.computeShieldHealthRatio() * 20) | 0;
-
-        this.player.universe.canvas.fillRect(
-            new Vec2(position.x - 10, position.y - offset),
-            new Vec2(shieldHealthBarWidth, 2),
-            'rgb(50,50,250)'
-        );
-    }
-
-    /**
-     * @param {Vec2} position
-     * @param {number} offset
-     */
-    armorHealthBar(position, offset)
-    {
-        const armorHealthBarWidth = (this.computeArmorHealthRatio() * 20) | 0;
-
-        this.player.universe.canvas.fillRect(
-            new Vec2(position.x - 10, position.y - offset),
-            new Vec2(armorHealthBarWidth, 2),
-            'rgb(130,130,141)'
-        );
-    }
-
-    /**
-     * @param {Vec2} position
-     * @param {number} offset
-     */
-    hullHealthBar(position, offset)
-    {
-        const hullHealthBarWidth = (this.computeHullHealthRatio() * 20) | 0;
-
-        this.player.universe.canvas.fillRect(
-            new Vec2(position.x - 10, position.y - offset),
-            new Vec2(hullHealthBarWidth, 2),
-            'rgb(81,227,48)'
-        );
-    }
-
-    /**
-     * @returns {number}
-     */
-    computeShieldHealthRatio()
-    {
-        return parseFloat((this.shieldHealth / this.maxShieldHealth()).toFixed(2));
-    }
-
-    /**
-     * @returns {number}
-     */
-    computeArmorHealthRatio()
-    {
-        return parseFloat((this.armorHealth / this.maxArmorHealth()).toFixed(2));
-    }
-
-    /**
-     * @returns {number}
-     */
-    computeHullHealthRatio()
-    {
-        return parseFloat((this.hullHealth / this.maxHullHealth()).toFixed(2));
     }
 }
 
@@ -239,8 +202,6 @@ class MoveState extends States.State
         super();
 
         this.destination = destination;
-
-        console.log(this.velocity);
     }
 
     /**

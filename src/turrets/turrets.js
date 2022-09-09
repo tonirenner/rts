@@ -1,6 +1,6 @@
 import Entities from '../entities.js';
 import States from '../states.js';
-import Projectiles from '../projectiles.js';
+import Projectiles from './projectiles.js';
 import Vessels from '../vessel/vessel.js';
 import Commands from '../commands.js';
 

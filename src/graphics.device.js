@@ -13,6 +13,7 @@ class Rectangle
      */
     scale(scale)
     {
+        this.position  = this.position.multiplyScalar(scale);
         this.dimension = this.dimension.multiplyScalar(scale);
     }
 }
@@ -142,7 +143,7 @@ class Canvas
     }
 
     /**
-     * @param {Rectangle} rectangle
+     * @param {Rectangle|*} rectangle
      */
     drawRectangle(rectangle)
     {
