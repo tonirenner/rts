@@ -20,7 +20,12 @@ class Star extends Entities.Unit
 
     render()
     {
-        this.player.universe.canvas.drawImage(this.image, this.position);
+        this.player.universe.canvas.drawImage(
+            this.image,
+            this.projectedPosition(),
+            this.image.width * this.player.universe.origin.scale,
+            this.image.height * this.player.universe.origin.scale
+        );
     }
 }
 

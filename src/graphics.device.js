@@ -1,5 +1,23 @@
 import {Vec2} from './coordinates.js';
 
+class Rectangle
+{
+    filled = false;
+    color  = 'rgb(255,0,0)';
+
+    position  = new Vec2();
+    dimension = Vec2.fromScalar(1);
+
+    /**
+     * @param {number} scale
+     */
+    scale(scale)
+    {
+        this.dimension = this.dimension.multiplyScalar(scale);
+    }
+}
+
+
 class Canvas
 {
     /**
@@ -104,7 +122,7 @@ class Canvas
             transform.a,
             transform.b,
             transform.c,
-            transform.d,
+            -1,
             this.halfScreenWidth,   // dx
             this.halfScreenHeight    // dy
         );
@@ -121,6 +139,51 @@ class Canvas
     restore()
     {
         this.context.restore();
+    }
+
+    /**
+     * @param {Rectangle} rectangle
+     */
+    drawRectangle(rectangle)
+    {
+        if (rectangle.filled) {
+            this.fillRect(
+                rectangle.position,
+                rectangle.dimension,
+                rectangle.color
+            );
+            return;
+        }
+
+        this.context.strokeStyle = rectangle.color;
+        this.strokeRect(
+            rectangle.position,
+            rectangle.dimension,
+            rectangle.color
+        );
+    }
+
+    /**
+     * @param {Rectangle} rectangle
+     */
+    drawRectangleCentered(rectangle)
+    {
+        const halfDimension = rectangle.dimension.multiplyScalar(0.5);
+
+        if (rectangle.filled) {
+            this.fillRect(
+                rectangle.position.subtract(halfDimension),
+                rectangle.dimension,
+                rectangle.color
+            );
+            return;
+        }
+
+        this.strokeRect(
+            rectangle.position.subtract(halfDimension),
+            rectangle.dimension,
+            rectangle.color
+        );
     }
 
     /**
@@ -205,19 +268,25 @@ class Canvas
     /**
      * @param {CanvasImageSource|*} image
      * @param {Vec2} position
+     * @param {number} width
+     * @param {number} height
      */
-    drawImage(image, position)
+    drawImage(image, position, width, height)
     {
         this.context.drawImage(
             image,
-            (position.x - image.width * 0.5) | 0,
-            (-position.y - image.height * 0.5) | 0
+            (position.x - width * 0.5) | 0,
+            (position.y - height * 0.5) | 0,
+            width,
+            height
         );
     }
 }
 
+
 const GraphicsDevice = {
-    Canvas
+    Canvas,
+    Rectangle
 };
 
 export default GraphicsDevice;

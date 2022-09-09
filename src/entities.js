@@ -33,15 +33,20 @@ class Entity
         this.state  = new States.IdleState();
     }
 
+    projectedPosition()
+    {
+        return this.position.multiplyScalar(this.player.universe.origin.scale);
+    }
+
     /**
      * @returns {Bounds2D}
      */
     bounds()
     {
-        const halfDimension = 9;
+        const halfDimension = 9 * this.player.universe.origin.scale;
 
-        this.bounds2d.min = this.position.subtractScalar(halfDimension);
-        this.bounds2d.max = this.position.addScalar(halfDimension);
+        this.bounds2d.min = this.projectedPosition().subtractScalar(halfDimension);
+        this.bounds2d.max = this.projectedPosition().addScalar(halfDimension);
 
         return this.bounds2d;
     }
@@ -53,11 +58,6 @@ class Entity
 
     render()
     {
-        this.player.universe.canvas.strokeCenteredRect(
-            this.position,
-            Vec2.fromScalar(20)
-        );
-
         this.state.render(this);
     }
 }

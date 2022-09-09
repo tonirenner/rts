@@ -152,8 +152,8 @@ export default class Camera
     transform()
     {
         this.universe.canvas.transform(
-            this.universe.origin.scale,
-            this.universe.origin.offset.multiplyScalar(-1)
+            1,
+            this.universe.origin.offset.multiply(new Vec2(1, -1))
         );
     }
 

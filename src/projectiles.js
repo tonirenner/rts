@@ -60,10 +60,11 @@ class TravelState extends States.State
             return;
         }
 
-        const distance = Distance.simple(entity.position, this.destination);
+        const position    = entity.projectedPosition();
+        const destination = this.destination.multiplyScalar(entity.player.universe.origin.scale);
 
-
-        const angle = entity.position.angle(this.destination);
+        const distance = Distance.simple(position, destination);
+        const angle    = position.angle(destination);
 
         const ax = Math.cos(angle) * this.velocity;
         const ay = Math.sin(angle) * this.velocity;
@@ -90,9 +91,11 @@ class TravelState extends States.State
      */
     lookupHit(entity)
     {
+        const position = entity.projectedPosition();
+
         let hit;
         for (let i in entity.player.universe.players) {
-            hit = entity.player.universe.players[i].units.findOneByCoordinates(entity.position);
+            hit = entity.player.universe.players[i].units.findOneByCoordinates(position);
             if (hit) {
                 return hit;
             }
@@ -145,8 +148,9 @@ class Projectile extends Entities.Entity
 
     render()
     {
+        const position = this.projectedPosition();
         this.player.universe.canvas.strokeRect(
-            new Vec2(this.position.x, -this.position.y),
+            new Vec2(position.x, position.y),
             Vec2.fromScalar(1),
             'rgb(225,165,34)'
         );

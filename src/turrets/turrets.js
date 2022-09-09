@@ -160,7 +160,7 @@ class Turret extends Entities.Entity
     {
         const projectile    = this.lunchProjectile();
         projectile.position = this.mountedOn.position.clone();
-        projectile.travelDirection(this.target.position);
+        projectile.travelDirection(this.target.position.clone());
 
         this.player.dispatchCommand(new Commands.LunchProjectileCommand(projectile));
 

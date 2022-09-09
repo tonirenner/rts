@@ -2,6 +2,7 @@ import Entities from '../entities.js';
 import States from '../states.js';
 import Turrets from '../turrets/turrets.js';
 import {Distance, Vec2} from '../coordinates.js';
+import GraphicsDevice from '../graphics.device.js';
 
 class Vessel extends Entities.Unit
 {
@@ -47,6 +48,11 @@ class AttackVessel extends Vessel
     turrets;
 
     /**
+     * @type {GraphicsDevice.Rectangle|*}
+     */
+    box;
+
+    /**
      * @param {Player|*} player
      */
     constructor(player)
@@ -57,6 +63,8 @@ class AttackVessel extends Vessel
         this.armorHealth  = this.maxArmorHealth();
         this.hullHealth   = this.maxHullHealth();
         this.turrets      = new Turrets.TurretGroup(player);
+
+        this.box = new GraphicsDevice.Rectangle();
     }
 
     /**
@@ -112,17 +120,17 @@ class AttackVessel extends Vessel
     {
         if (this.isSelected) {
             this.player.universe.canvas.strokeCenteredRect(
-                new Vec2(this.position.x, -this.position.y + 5),
+                new Vec2(this.position.x, this.position.y - 5),
                 new Vec2(36, 48),
                 'rgba(113,239,85, 0.5)'
             );
         }
 
-        this.player.universe.canvas.strokeCenteredRect(
-            new Vec2(this.position.x, -this.position.y),
-            Vec2.fromScalar(20),
-            this.player.color
-        );
+        this.box.position  = this.projectedPosition();
+        this.box.dimension = Vec2.fromScalar(20);
+        this.box.color     = this.player.color;
+        this.box.scale(this.player.universe.origin.scale);
+        this.player.universe.canvas.drawRectangleCentered(this.box);
 
         this.shieldHealthBar(this.position, 12);
         this.armorHealthBar(this.position, 15);
@@ -131,7 +139,7 @@ class AttackVessel extends Vessel
         if (this.player.universe.debug) {
             const bounds = this.bounds();
             this.player.universe.canvas.strokeCenteredRect(
-                new Vec2(bounds.center.x, -bounds.center.y),
+                new Vec2(bounds.center.x, bounds.center.y),
                 bounds.dimension,
                 'rgb(149,73,176)'
             );
@@ -149,7 +157,7 @@ class AttackVessel extends Vessel
         const shieldHealthBarWidth = (this.computeShieldHealthRatio() * 20) | 0;
 
         this.player.universe.canvas.fillRect(
-            new Vec2(position.x - 10, -position.y + offset),
+            new Vec2(position.x - 10, position.y - offset),
             new Vec2(shieldHealthBarWidth, 2),
             'rgb(50,50,250)'
         );
@@ -164,7 +172,7 @@ class AttackVessel extends Vessel
         const armorHealthBarWidth = (this.computeArmorHealthRatio() * 20) | 0;
 
         this.player.universe.canvas.fillRect(
-            new Vec2(position.x - 10, -position.y + offset),
+            new Vec2(position.x - 10, position.y - offset),
             new Vec2(armorHealthBarWidth, 2),
             'rgb(130,130,141)'
         );
@@ -179,7 +187,7 @@ class AttackVessel extends Vessel
         const hullHealthBarWidth = (this.computeHullHealthRatio() * 20) | 0;
 
         this.player.universe.canvas.fillRect(
-            new Vec2(position.x - 10, -position.y + offset),
+            new Vec2(position.x - 10, position.y - offset),
             new Vec2(hullHealthBarWidth, 2),
             'rgb(81,227,48)'
         );
@@ -240,12 +248,16 @@ class MoveState extends States.State
      */
     update(entity)
     {
-        if (Distance.simple(entity.position, this.destination) < 5) {
+        const scale       = entity.player.universe.origin.scale;
+        const position    = entity.projectedPosition();
+        const destination = this.destination.multiplyScalar(entity.player.universe.origin.scale);
+
+        if (Distance.simple(position, destination) < 5) {
             entity.state = new States.IdleState();
             return;
         }
 
-        const angle = entity.position.angle(this.destination);
+        const angle = position.angle(destination);
 
         this.velocity.x += Math.cos(angle) * 0.01;
         this.velocity.y += Math.sin(angle) * 0.01;
@@ -259,9 +271,12 @@ class MoveState extends States.State
      */
     render(entity)
     {
+        const position    = entity.projectedPosition();
+        const destination = this.destination.multiplyScalar(entity.player.universe.origin.scale);
+
         entity.player.universe.canvas.line(
-            new Vec2(entity.position.x, -entity.position.y),
-            new Vec2(this.destination.x, -this.destination.y),
+            new Vec2(position.x, position.y),
+            new Vec2(destination.x, destination.y),
             'rgb(0,255,0)'
         );
     }

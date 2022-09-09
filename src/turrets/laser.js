@@ -74,9 +74,12 @@ class BeamState extends States.State
      */
     render(entity)
     {
+        const position    = entity.projectedPosition();
+        const destination = this.destination.multiplyScalar(entity.player.universe.origin.scale);
+
         entity.player.universe.canvas.line(
-            new Vec2(entity.position.x, -entity.position.y),
-            new Vec2(this.destination.x, -this.destination.y),
+            new Vec2(position.x, position.y),
+            new Vec2(destination.x, destination.y),
             'rgba(0,127,255, 0.6)'
         );
     }
@@ -89,9 +92,11 @@ class BeamState extends States.State
      */
     lookupHit(entity)
     {
+        const destination = this.destination.multiplyScalar(entity.player.universe.origin.scale);
+
         let hit;
         for (let i in entity.player.universe.players) {
-            hit = entity.player.universe.players[i].units.findOneByCoordinates(this.destination);
+            hit = entity.player.universe.players[i].units.findOneByCoordinates(destination);
             if (hit) {
                 return hit;
             }
