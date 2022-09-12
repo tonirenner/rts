@@ -21,11 +21,27 @@ class Vessel extends Entities.Unit
     }
 
     /**
+     * @returns {number}
+     */
+    maxVelocity()
+    {
+        return 1;
+    }
+
+    /**
+     * @returns {number}
+     */
+    acceleration()
+    {
+        return 0.01;
+    }
+
+    /**
      * @param {Vec2} destination
      */
     move(destination)
     {
-        this.state = new MoveState(destination);
+        this.state = new MoveState(destination, this.acceleration(), this.maxVelocity());
     }
 }
 
@@ -72,9 +88,9 @@ class AttackVessel extends Vessel
 
         this.ship      = new GraphicsDevice.Rectangle();
         this.box       = new GraphicsDevice.Rectangle();
-        this.shieldBar = new HealthBar(this.maxShieldHealth(), new Vec2(-10, -12));
-        this.armorBar  = new HealthBar(this.maxArmorHealth(), new Vec2(-10, -15));
-        this.hullBar   = new HealthBar(this.maxHullHealth(), new Vec2(-10, -18));
+        this.shieldBar = new HealthBar(this.maxShieldHealth(), new Vec2(-10, -13));
+        this.armorBar  = new HealthBar(this.maxArmorHealth(), new Vec2(-10, -16));
+        this.hullBar   = new HealthBar(this.maxHullHealth(), new Vec2(-10, -19));
 
         this.box.color      = 'rgba(113,239,85, 0.5)';
         this.armorBar.color = 'rgb(130,130,141)';
@@ -187,7 +203,14 @@ class MoveState extends States.State
      * @type {Vec2}
      */
     destination;
-
+    /**
+     * @type {number}
+     */
+    acceleration;
+    /**
+     * @type {number}
+     */
+    maxVelocity;
     /**
      * @type {Vec2}
      */
@@ -196,12 +219,16 @@ class MoveState extends States.State
     /**
      *
      * @param {Vec2} destination
+     * @param {number} acceleration
+     * @param {number} maxVelocity
      */
-    constructor(destination)
+    constructor(destination, acceleration, maxVelocity)
     {
         super();
 
-        this.destination = destination;
+        this.destination  = destination;
+        this.acceleration = acceleration;
+        this.maxVelocity  = maxVelocity;
     }
 
     /**
@@ -209,7 +236,6 @@ class MoveState extends States.State
      */
     update(entity)
     {
-        const scale       = entity.player.universe.origin.scale;
         const position    = entity.projectedPosition();
         const destination = this.destination.multiplyScalar(entity.player.universe.origin.scale);
 
@@ -220,8 +246,10 @@ class MoveState extends States.State
 
         const angle = position.angle(destination);
 
-        this.velocity.x += Math.cos(angle) * 0.01;
-        this.velocity.y += Math.sin(angle) * 0.01;
+        if (this.velocity.median() < this.maxVelocity) {
+            this.velocity.x += Math.cos(angle) * this.acceleration;
+            this.velocity.y += Math.sin(angle) * this.acceleration;
+        }
 
         entity.position.x += this.velocity.x;
         entity.position.y += this.velocity.y;

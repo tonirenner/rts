@@ -29,6 +29,14 @@ export class Vec2
     }
 
     /**
+     * @returns {number}
+     */
+    median()
+    {
+        return Math.abs((this.x + this.y) / 2);
+    }
+
+    /**
      * @param {Vec2} v
      * @returns {number}
      */
