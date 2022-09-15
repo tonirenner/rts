@@ -147,11 +147,11 @@ export class FloatingOrigin
     /**
      * @type {Vec2}
      */
-    currentPointerLocation;
+    cursorPosition;
     /**
      * @type {Vec2}
      */
-    lastPointerLocation;
+    lastCursorPosition;
     /**
      * @type {number}
      */
@@ -171,10 +171,10 @@ export class FloatingOrigin
      */
     constructor(offset, scale)
     {
-        this.offset                 = offset;
-        this.scale                  = scale;
-        this.currentPointerLocation = new Vec2();
-        this.lastPointerLocation    = new Vec2();
+        this.offset       = offset;
+        this.scale        = scale;
+        this.cursorPosition     = new Vec2();
+        this.lastCursorPosition = new Vec2();
     }
 
     /**
@@ -193,19 +193,18 @@ export class FloatingOrigin
     }
 
     /**
-     * @param {Vec2} cornerTopLeft
-     * @param {Vec2} pointerLocation
+     * @param {Vec2} cursorPosition
      */
-    move(cornerTopLeft, pointerLocation)
+    trackCursor(cursorPosition)
     {
-        this.lastPointerLocation    = this.currentPointerLocation;
-        this.currentPointerLocation = pointerLocation.subtract(cornerTopLeft);
+        this.lastCursorPosition = this.cursorPosition;
+        this.cursorPosition     = cursorPosition;
     }
 
     pan()
     {
-        const deltaPointerLocation = this.currentPointerLocation
-                                         .subtract(this.lastPointerLocation)
+        const deltaPointerLocation = this.cursorPosition
+                                         .subtract(this.lastCursorPosition)
                                          .divideScalar(this.scale);
 
         this.offset = this.offset.subtract(deltaPointerLocation);

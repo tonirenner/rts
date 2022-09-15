@@ -156,7 +156,6 @@ class AttackVessel extends Vessel
             this.box.position.y  = position.y - 5;
             this.box.dimension.x = 36;
             this.box.dimension.y = 48;
-            this.box.scale(scale);
             this.player.universe.canvas.drawRectangleCentered(this.box);
         }
 
@@ -174,10 +173,6 @@ class AttackVessel extends Vessel
         this.shieldBar.update();
         this.armorBar.update();
         this.hullBar.update();
-        this.ship.scale(scale);
-        this.shieldBar.scale(scale);
-        this.armorBar.scale(scale);
-        this.hullBar.scale(scale);
 
         this.player.universe.canvas.drawRectangleCentered(this.ship);
         this.player.universe.canvas.drawRectangle(this.shieldBar);
@@ -187,8 +182,8 @@ class AttackVessel extends Vessel
         if (this.player.universe.debug) {
             const bounds = this.bounds();
             this.player.universe.canvas.strokeCenteredRect(
-                bounds.center.multiplyScalar(scale),
-                bounds.dimension.multiplyScalar(scale),
+                bounds.center,
+                bounds.dimension,
                 'rgb(149,73,176)'
             );
         }
@@ -236,15 +231,12 @@ class MoveState extends States.State
      */
     update(entity)
     {
-        const position    = entity.projectedPosition();
-        const destination = this.destination.multiplyScalar(entity.player.universe.origin.scale);
-
-        if (Distance.simple(position, destination) < 5) {
+        if (Distance.simple(entity.position, this.destination) < 5) {
             entity.state = new States.IdleState();
             return;
         }
 
-        const angle = position.angle(destination);
+        const angle = entity.position.angle(this.destination);
 
         if (this.velocity.median() < this.maxVelocity) {
             this.velocity.x += Math.cos(angle) * this.acceleration;
@@ -260,12 +252,9 @@ class MoveState extends States.State
      */
     render(entity)
     {
-        const position    = entity.projectedPosition();
-        const destination = this.destination.multiplyScalar(entity.player.universe.origin.scale);
-
         entity.player.universe.canvas.line(
-            new Vec2(position.x, position.y),
-            new Vec2(destination.x, destination.y),
+            new Vec2(entity.position.x, entity.position.y),
+            new Vec2(this.destination.x, this.destination.y),
             'rgb(0,255,0)'
         );
     }

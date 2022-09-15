@@ -19,6 +19,28 @@ class Rectangle
 }
 
 
+class Projection
+{
+    /**
+     * @param {number} width
+     * @param {number} height
+     * @returns {DOMMatrix}
+     */
+    matrix(width, height)
+    {
+        const sx = 1;
+        const sy = -1;
+        const tx = width / 2;
+        const ty = height / 2;
+
+        return new DOMMatrix([
+                                 sx, 0,
+                                 0, sy,
+                                 tx, ty
+                             ]);
+    }
+}
+
 class Canvas
 {
     /**
@@ -51,13 +73,25 @@ class Canvas
      */
     constructor(screen)
     {
-        this.screen  = screen;
-        this.context = screen.getContext('2d');
+        this.screen     = screen;
+        this.context    = screen.getContext('2d');
+        this.projection = new Projection();
     }
 
+    /**
+     * @returns {DOMRect}
+     */
     getBoundingClientRect()
     {
         return this.screen.getBoundingClientRect();
+    }
+
+    /**
+     * @returns {DOMMatrix}
+     */
+    getTransform()
+    {
+        return this.context.getTransform();
     }
 
     /**
@@ -67,6 +101,43 @@ class Canvas
     addEventListener(type, handler)
     {
         this.screen.addEventListener(type, handler);
+    }
+
+    /**
+     * @param {MouseEvent} event
+     * @returns {Vec2}
+     */
+    screenCoordinates(event)
+    {
+        const rect = this.getBoundingClientRect();
+        return new Vec2(
+            event.clientX - rect.left,
+            event.clientY - rect.top
+        );
+    }
+
+    /**
+     * @param {Vec2} coordinates
+     * @returns {Vec2}
+     */
+    screenToWorld(coordinates)
+    {
+        const point = new DOMPoint(coordinates.x, coordinates.y)
+            .matrixTransform(this.context.getTransform().inverse());
+
+        return new Vec2(point.x, point.y);
+    }
+
+    /**
+     * @param {Vec2} coordinates
+     * @returns {Vec2}
+     */
+    worldToScreen(coordinates)
+    {
+        const point = new DOMPoint(coordinates.x, coordinates.y)
+            .matrixTransform(this.context.getTransform());
+
+        return new Vec2(point.x, point.y);
     }
 
     /**
@@ -90,46 +161,41 @@ class Canvas
     clear()
     {
         this.fillRect(
-            new Vec2(-this.halfScreenWidth, -this.halfScreenHeight),
-            new Vec2(this.screenWidth, this.screenHeight),
+            new Vec2(-this.halfScreenWidth, this.halfScreenHeight),
+            new Vec2(this.screenWidth, -this.screenHeight),
             this.clearColor
         );
     }
 
-    /**
-     * @param {number} scale
-     * @param {Vec2} offset
-     */
-    resize(scale = 1, offset = new Vec2())
+    resize()
     {
         this.screen.width  = this.screenWidth;
         this.screen.height = this.screenHeight;
 
-        this.transform(scale, offset);
+        this.context.setTransform(this.projection.matrix(
+            this.screenWidth,
+            this.screenHeight
+        ));
 
         this.clear();
     }
 
     /**
-     * @param {number} scale
-     * @param {Vec2} offset
+     * @param {number} x
+     * @param {number} y
      */
-    transform(scale, offset)
+    scale(x, y)
     {
-        this.context.setTransform();
+        this.context.scale(x, y);
+    }
 
-        const transform = this.context.getTransform();
-        this.context.setTransform(
-            transform.a,
-            transform.b,
-            transform.c,
-            -1,
-            this.halfScreenWidth,   // dx
-            this.halfScreenHeight    // dy
-        );
-
-        this.context.scale(scale, scale);
-        this.context.translate(offset.x, offset.y);
+    /**
+     * @param {number} x
+     * @param {number} y
+     */
+    translate(x, y)
+    {
+        this.context.translate(x, y);
     }
 
     save()

@@ -1,117 +1,24 @@
-import {FloatingOrigin, Vec2} from './coordinates.js';
-import {Bounds2D} from './bounds.js';
-
-class Viewport
-{
-    /**
-     * @type FloatingOrigin
-     */
-    origin;
-    /**
-     * @type {Bounds2D}
-     */
-    bounds2d      = new Bounds2D(new Vec2(), new Vec2());
-    /**
-     * @type {Vec2}
-     */
-    dimension     = new Vec2();
-    /**
-     * @type {Vec2}
-     */
-    halfDimension = new Vec2();
-
-    /**
-     * @param {FloatingOrigin} origin
-     */
-    constructor(origin)
-    {
-        this.origin = origin;
-    }
-
-    update()
-    {
-        const origin = this.origin.offset.multiplyScalar(-1);
-
-        this.bounds2d.min = origin.subtract(this.halfDimension.divideScalar(this.origin.scale));
-        this.bounds2d.max = origin.add(this.halfDimension.divideScalar(this.origin.scale));
-    }
-
-    /**
-     * @param {number} width
-     */
-    set width(width)
-    {
-        this.dimension.x     = width | 0;
-        this.halfDimension.x = (width / 2) | 0;
-
-        this.update();
-    }
-
-    /**
-     * @param {number} height
-     */
-    set height(height)
-    {
-        this.dimension.y     = height | 0;
-        this.halfDimension.y = (height / 2) | 0;
-
-        this.update();
-    }
-
-    /**
-     * @param {Canvas} canvas
-     * @param {MouseEvent} event
-     * @returns {Vec2}
-     */
-    screenCoordinates(canvas, event)
-    {
-        const rect = canvas.getBoundingClientRect();
-        return new Vec2(
-            event.clientX - rect.left,
-            event.clientY - rect.top
-        );
-    }
-
-    /**
-     * @param {Vec2} coordinates
-     * @returns {Vec2}
-     */
-    screenToWorld(coordinates)
-    {
-        return coordinates.divideScalar(this.origin.scale).subtract(this.bounds2d.max).multiply(new Vec2(1, -1));
-    }
-
-    /**
-     * @param {Vec2} coordinates
-     * @returns {Vec2}
-     */
-    worldToScreen(coordinates)
-    {
-        return coordinates.add(this.bounds2d.max).multiplyScalar(this.origin.scale);
-    }
-
-}
+import {Vec2} from './coordinates.js';
 
 export default class Camera
 {
-    /**
-     * @type {Viewport}
-     */
-    viewport;
     /**
      * @type {Universe}
      */
     universe;
 
     /**
+     * @type {DOMMatrix}
+     */
+    projection;
+
+    /**
      * @param {Universe|*} universe
      */
     constructor(universe)
     {
-        this.viewport        = new Viewport(universe.origin);
-        this.viewport.width  = universe.canvas.screenWidth;
-        this.viewport.height = universe.canvas.screenHeight;
-        this.universe        = universe;
+        this.universe   = universe;
+        this.projection = universe.canvas.getTransform();
 
         this.handleOriginOffsetHasChanged = this.onOriginOffsetHasChanged.bind(this);
         this.handleStopPan                = this.onStopPan.bind(this);
@@ -122,13 +29,22 @@ export default class Camera
         this.universe.canvas.addEventListener('mousedown', this.onStartPan.bind(this));
     }
 
+
+    /**
+     * @returns {DOMMatrix}
+     */
+    getProjection()
+    {
+        return this.projection;
+    }
+
     /**
      * @param {MouseEvent} e
      * @returns {Vec2}
      */
     screenCoordinates(e)
     {
-        return this.viewport.screenCoordinates(this.universe.canvas, e);
+        return this.universe.canvas.screenCoordinates(e);
     }
 
     /**
@@ -137,7 +53,11 @@ export default class Camera
      */
     screenToWorld(coordinates)
     {
-        return this.viewport.screenToWorld(coordinates);
+        const point = new DOMPoint(coordinates.x, coordinates.y)
+            .matrixTransform(this.projection.inverse());
+
+
+        return new Vec2(point.x, point.y);
     }
 
     /**
@@ -146,16 +66,22 @@ export default class Camera
      */
     worldToScreen(coordinates)
     {
-        return this.viewport.worldToScreen(coordinates);
+        const point = new DOMPoint(coordinates.x, coordinates.y)
+            .matrixTransform(this.projection);
+
+        return new Vec2(point.x, point.y);
     }
 
     transform()
     {
-        this.universe.canvas.transform(
-            1,
-            this.universe.origin.offset.multiply(new Vec2(1, -1))
+        this.universe.canvas.scale(
+            this.universe.origin.scale,
+            this.universe.origin.scale
         );
+
+        this.projection = this.universe.canvas.getTransform();
     }
+
 
     /**
      * @param {WheelEvent} e
@@ -165,7 +91,6 @@ export default class Camera
         e.preventDefault();
 
         this.universe.origin.zoom(e.deltaY);
-        this.viewport.update();
     }
 
     /**
@@ -175,14 +100,7 @@ export default class Camera
     {
         e.preventDefault();
 
-        const rect = this.universe.canvas.getBoundingClientRect();
-
-        this.universe.origin.move(
-            new Vec2(rect.left, rect.top),
-            new Vec2(e.clientX, e.clientY)
-        );
-
-        this.viewport.update();
+        this.universe.origin.trackCursor(this.screenCoordinates(e));
     }
 
     onOriginOffsetHasChanged()

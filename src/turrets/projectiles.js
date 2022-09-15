@@ -60,11 +60,8 @@ class TravelState extends States.State
             return;
         }
 
-        const position    = entity.projectedPosition();
-        const destination = this.destination.multiplyScalar(entity.player.universe.origin.scale);
-
-        const distance = Distance.simple(position, destination);
-        const angle    = position.angle(destination);
+        const distance = Distance.simple(entity.position, this.destination);
+        const angle    = entity.position.angle(this.destination);
 
         const ax = Math.cos(angle) * this.velocity;
         const ay = Math.sin(angle) * this.velocity;
@@ -146,9 +143,8 @@ class Projectile extends Entities.Entity
 
     render()
     {
-        const position = this.projectedPosition();
         this.player.universe.canvas.strokeRect(
-            new Vec2(position.x, position.y),
+            new Vec2(this.position.x, this.position.y),
             Vec2.fromScalar(1),
             'rgb(225,165,34)'
         );

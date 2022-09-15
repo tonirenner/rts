@@ -74,12 +74,9 @@ class BeamState extends States.State
      */
     render(entity)
     {
-        const position    = entity.projectedPosition();
-        const destination = this.destination.multiplyScalar(entity.player.universe.origin.scale);
-
         entity.player.universe.canvas.line(
-            new Vec2(position.x, position.y),
-            new Vec2(destination.x, destination.y),
+            new Vec2(entity.position.x, entity.position.y),
+            new Vec2(this.destination.x, this.destination.y),
             'rgba(0,127,255, 0.6)'
         );
     }

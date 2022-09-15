@@ -33,17 +33,12 @@ class Entity
         this.state  = new States.IdleState();
     }
 
-    projectedPosition()
-    {
-        return this.position.multiplyScalar(this.player.universe.origin.scale);
-    }
-
     /**
      * @returns {Bounds2D}
      */
     bounds()
     {
-        const halfDimension = 9;// * this.player.universe.origin.scale;
+        const halfDimension = 9;
 
         this.bounds2d.min = this.position.subtractScalar(halfDimension);
         this.bounds2d.max = this.position.addScalar(halfDimension);

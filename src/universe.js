@@ -74,6 +74,11 @@ export class Universe
     commandQueue = new Commands.CommandQueue();
 
     /**
+     * @type {Camera}
+     */
+    camera;
+
+    /**
      * @type {FloatingOrigin}
      */
     origin = new FloatingOrigin(new Vec2(), 1);
@@ -167,6 +172,10 @@ export class Universe
 
     render()
     {
+        this.canvas.save();
+        this.canvas.clear();
+        this.camera.transform();
+
         this.entities.render();
 
         for (let i in this.players) {
@@ -176,5 +185,6 @@ export class Universe
         this.player.units.render();
 
 
+        this.canvas.restore();
     }
 }

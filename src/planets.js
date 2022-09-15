@@ -22,9 +22,9 @@ class Planet extends Entities.Unit
     {
         this.player.universe.canvas.drawImage(
             this.image,
-            this.projectedPosition(),
-            this.image.width * this.player.universe.origin.scale,
-            this.image.height * this.player.universe.origin.scale
+            this.position,
+            this.image.width,
+            this.image.height
         );
     }
 }

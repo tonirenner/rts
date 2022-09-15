@@ -21,7 +21,7 @@ canvas.clearColor = 'rgb(28,26,26)';
 
 
 const universe  = new Universe(canvas);
-const camera    = new Camera(universe);
+universe.camera = new Camera(universe);
 universe.player = new Player(universe);
 
 const enemyPlayer = new Player(universe);
@@ -56,24 +56,21 @@ planet.position.y = -300;
 universe.entities.add(star);
 universe.entities.add(planet);
 
-universe.debug = false;
+universe.debug = true;
 
 canvas.resize();
 
 const gameLoop    = new GameLoop();
 gameLoop.onUpdate = () => universe.update();
 gameLoop.onDraw   = () => {
-    canvas.save();
-    canvas.clear();
-    camera.transform();
     universe.render();
-    canvas.restore();
 };
 gameLoop.onStats  = () => {
 
+    //mouse: ${JSON.stringify(camera.screenToWorld(universe.origin.cursorPosition))}
     debug.innerText = `
     scale: ${universe.origin.scale}
-    mouse: ${JSON.stringify(camera.screenToWorld(universe.origin.currentPointerLocation))}
+    
     offset: ${JSON.stringify(universe.origin.offset)}
     fps: ${Math.round(gameLoop.fps)}
     `;
@@ -98,8 +95,14 @@ canvas.addEventListener('mousedown', e => {
 canvas.addEventListener('click', e => {
     e.preventDefault();
 
-    const worldCoordinates = camera.screenToWorld(camera.screenCoordinates(e));
+    const screenCoordinates = universe.camera.screenCoordinates(e);
+    const worldCoordinates  = universe.camera.screenToWorld(screenCoordinates);
 
+    console.log(
+        screenCoordinates,
+        worldCoordinates,
+        universe.camera.worldToScreen(worldCoordinates)
+    );
     const unit = universe.player.units.findOneByCoordinates(worldCoordinates);
     if (unit) {
         unit.isSelected = true;
