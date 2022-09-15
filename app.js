@@ -67,11 +67,11 @@ gameLoop.onDraw   = () => {
 };
 gameLoop.onStats  = () => {
 
-    //mouse: ${JSON.stringify(camera.screenToWorld(universe.origin.cursorPosition))}
+
     debug.innerText = `
-    scale: ${universe.origin.scale}
-    
-    offset: ${JSON.stringify(universe.origin.offset)}
+    scale: ${universe.camera.origin.scale}
+    mouse: ${JSON.stringify(universe.camera.origin.screenPosition)}
+    offset: ${JSON.stringify(universe.camera.origin.offset)}
     fps: ${Math.round(gameLoop.fps)}
     `;
 };

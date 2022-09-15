@@ -147,11 +147,11 @@ export class FloatingOrigin
     /**
      * @type {Vec2}
      */
-    cursorPosition;
+    screenPosition;
     /**
      * @type {Vec2}
      */
-    lastCursorPosition;
+    lastScreenPosition;
     /**
      * @type {number}
      */
@@ -171,10 +171,10 @@ export class FloatingOrigin
      */
     constructor(offset, scale)
     {
-        this.offset       = offset;
-        this.scale        = scale;
-        this.cursorPosition     = new Vec2();
-        this.lastCursorPosition = new Vec2();
+        this.offset             = offset;
+        this.scale              = scale;
+        this.screenPosition     = new Vec2();
+        this.lastScreenPosition = new Vec2();
     }
 
     /**
@@ -193,20 +193,26 @@ export class FloatingOrigin
     }
 
     /**
-     * @param {Vec2} cursorPosition
+     * @param {Vec2} screenPosition
      */
-    trackCursor(cursorPosition)
+    trackCursor(screenPosition)
     {
-        this.lastCursorPosition = this.cursorPosition;
-        this.cursorPosition     = cursorPosition;
+        this.lastScreenPosition = this.screenPosition;
+        this.screenPosition     = screenPosition;
     }
 
     pan()
     {
-        const deltaPointerLocation = this.cursorPosition
-                                         .subtract(this.lastCursorPosition)
-                                         .divideScalar(this.scale);
+        this.offset = this.offset.add(this.deltaScreenPosition().multiply(new Vec2(1, -1)));
+    }
 
-        this.offset = this.offset.subtract(deltaPointerLocation);
+    /**
+     * @returns {Vec2}
+     */
+    deltaScreenPosition()
+    {
+        return this.screenPosition
+                   .subtract(this.lastScreenPosition)
+                   .divideScalar(this.scale);
     }
 }

@@ -79,11 +79,6 @@ export class Universe
     camera;
 
     /**
-     * @type {FloatingOrigin}
-     */
-    origin = new FloatingOrigin(new Vec2(), 1);
-
-    /**
      * @type {EntityGroup|*}
      */
     entities;

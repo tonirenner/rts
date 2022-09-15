@@ -148,7 +148,6 @@ class AttackVessel extends Vessel
 
     render()
     {
-        const scale    = this.player.universe.origin.scale;
         const position = this.position.clone();
 
         if (this.isSelected) {

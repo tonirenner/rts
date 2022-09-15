@@ -1,4 +1,4 @@
-import {Vec2} from './coordinates.js';
+import {FloatingOrigin, Vec2} from './coordinates.js';
 
 export default class Camera
 {
@@ -13,6 +13,26 @@ export default class Camera
     projection;
 
     /**
+     * @type {FloatingOrigin}
+     */
+    origin = new FloatingOrigin(new Vec2(), 1);
+
+    /** @type {function} */
+    boundOnZoom = this.onZoom.bind(this);
+
+    /** @type {function} */
+    boundOnOriginHasChanged = this.onOriginHasChanged.bind(this);
+
+    /** @type {function} */
+    boundOnTrackCursor = this.onTrackCursor.bind(this);
+
+    /** @type {function} */
+    boundOnStartPanning = this.onStartPanning.bind(this);
+
+    /** @type {function} */
+    boundOnStopPanning = this.onStopPanning.bind(this);
+
+    /**
      * @param {Universe|*} universe
      */
     constructor(universe)
@@ -20,22 +40,10 @@ export default class Camera
         this.universe   = universe;
         this.projection = universe.canvas.getTransform();
 
-        this.handleOriginOffsetHasChanged = this.onOriginOffsetHasChanged.bind(this);
-        this.handleStopPan                = this.onStopPan.bind(this);
+        this.universe.canvas.addEventListener('wheel', this.boundOnZoom);
+        this.universe.canvas.addEventListener('mousedown', this.boundOnStartPanning);
 
-        document.addEventListener('mousemove', this.onPointerLocationHasChanged.bind(this));
-
-        this.universe.canvas.addEventListener('wheel', this.onZoomHasChanged.bind(this));
-        this.universe.canvas.addEventListener('mousedown', this.onStartPan.bind(this));
-    }
-
-
-    /**
-     * @returns {DOMMatrix}
-     */
-    getProjection()
-    {
-        return this.projection;
+        document.addEventListener('mousemove', this.boundOnTrackCursor);
     }
 
     /**
@@ -56,7 +64,6 @@ export default class Camera
         const point = new DOMPoint(coordinates.x, coordinates.y)
             .matrixTransform(this.projection.inverse());
 
-
         return new Vec2(point.x, point.y);
     }
 
@@ -75,8 +82,13 @@ export default class Camera
     transform()
     {
         this.universe.canvas.scale(
-            this.universe.origin.scale,
-            this.universe.origin.scale
+            this.origin.scale,
+            this.origin.scale
+        );
+
+        this.universe.canvas.translate(
+            this.origin.offset.x,
+            this.origin.offset.y
         );
 
         this.projection = this.universe.canvas.getTransform();
@@ -86,41 +98,43 @@ export default class Camera
     /**
      * @param {WheelEvent} e
      */
-    onZoomHasChanged(e)
+    onZoom(e)
     {
         e.preventDefault();
 
-        this.universe.origin.zoom(e.deltaY);
+        this.origin.zoom(e.deltaY);
     }
 
     /**
      * @param {MouseEvent} e
      */
-    onPointerLocationHasChanged(e)
+    onTrackCursor(e)
     {
         e.preventDefault();
 
-        this.universe.origin.trackCursor(this.screenCoordinates(e));
+        this.origin.trackCursor(
+            this.screenCoordinates(e)
+        );
     }
 
-    onOriginOffsetHasChanged()
+    onOriginHasChanged()
     {
-        this.universe.origin.pan();
+        this.origin.pan();
     }
 
-    onStartPan(e)
+    onStartPanning(e)
     {
         if (e.which !== 3) {
             return;
         }
 
-        document.addEventListener('mousemove', this.handleOriginOffsetHasChanged);
-        document.addEventListener('mouseup', this.handleStopPan);
+        document.addEventListener('mousemove', this.boundOnOriginHasChanged);
+        document.addEventListener('mouseup', this.boundOnStopPanning);
     }
 
-    onStopPan()
+    onStopPanning()
     {
-        document.removeEventListener('mousemove', this.handleOriginOffsetHasChanged);
-        document.removeEventListener('mouseup', this.handleStopPan);
+        document.removeEventListener('mousemove', this.boundOnOriginHasChanged);
+        document.removeEventListener('mouseup', this.boundOnStopPanning);
     }
 }
