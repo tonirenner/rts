@@ -1,11 +1,11 @@
-import Entities from '../entities.js';
-import States from '../states.js';
-import Turrets from '../turrets/turrets.js';
-import {Distance, Vec2} from '../coordinates.js';
-import GraphicsDevice from '../graphics.device.js';
 import {HealthBar} from '../drawable/indicator.js';
+import {Unit} from '../unit.js';
+import {IdleState, State} from '../state.js';
+import {Distance, Vec2} from '../../coordinates.js';
+import {TurretGroup} from './turrets.js';
+import {Rectangle} from '../../canvas/shapes.js';
 
-class Vessel extends Entities.Unit
+export class Vessel extends Unit
 {
     /**
      * @type {boolean}
@@ -45,7 +45,7 @@ class Vessel extends Entities.Unit
     }
 }
 
-class AttackVessel extends Vessel
+export class AttackVessel extends Vessel
 {
     /**
      * @type {number}
@@ -65,12 +65,12 @@ class AttackVessel extends Vessel
     turrets;
 
     /**
-     * @type {GraphicsDevice.Rectangle|*}
+     * @type {Rectangle|*}
      */
     ship;
 
     /**
-     * @type {GraphicsDevice.Rectangle|*}
+     * @type {Rectangle|*}
      */
     box;
 
@@ -84,10 +84,10 @@ class AttackVessel extends Vessel
         this.shieldHealth = this.maxShieldHealth();
         this.armorHealth  = this.maxArmorHealth();
         this.hullHealth   = this.maxHullHealth();
-        this.turrets      = new Turrets.TurretGroup(player);
+        this.turrets      = new TurretGroup(player);
 
-        this.ship      = new GraphicsDevice.Rectangle();
-        this.box       = new GraphicsDevice.Rectangle();
+        this.ship      = new Rectangle();
+        this.box       = new Rectangle();
         this.shieldBar = new HealthBar(this.maxShieldHealth(), new Vec2(-10, -13));
         this.armorBar  = new HealthBar(this.maxArmorHealth(), new Vec2(-10, -16));
         this.hullBar   = new HealthBar(this.maxHullHealth(), new Vec2(-10, -19));
@@ -137,13 +137,30 @@ class AttackVessel extends Vessel
     lockOnTarget(target)
     {
         this.turrets.lockOnTarget(target);
-        this.state = new States.IdleState();
+        this.state = new IdleState();
     }
 
     update()
     {
+        const position = this.position.clone();
+
+        this.ship.position  = position.clone();
+        this.ship.dimension = Vec2.fromScalar(20);
+        this.ship.color     = this.player.color;
+
+        this.shieldBar.position = position.clone();
+        this.armorBar.position  = position.clone();
+        this.hullBar.position   = position.clone();
+        this.shieldBar.health   = this.shieldHealth;
+        this.armorBar.health    = this.armorHealth;
+        this.hullBar.health     = this.hullHealth;
+
         super.update();
+
         this.turrets.update();
+        this.shieldBar.update();
+        this.armorBar.update();
+        this.hullBar.update();
     }
 
     render()
@@ -157,21 +174,6 @@ class AttackVessel extends Vessel
             this.box.dimension.y = 48;
             this.player.universe.canvas.drawRectangleCentered(this.box);
         }
-
-        this.ship.position  = position.clone();
-        this.ship.dimension = Vec2.fromScalar(20);
-        this.ship.color     = this.player.color;
-
-        this.shieldBar.position = position.clone();
-        this.armorBar.position  = position.clone();
-        this.hullBar.position   = position.clone();
-        this.shieldBar.health   = this.shieldHealth;
-        this.armorBar.health    = this.armorHealth;
-        this.hullBar.health     = this.hullHealth;
-
-        this.shieldBar.update();
-        this.armorBar.update();
-        this.hullBar.update();
 
         this.player.universe.canvas.drawRectangleCentered(this.ship);
         this.player.universe.canvas.drawRectangle(this.shieldBar);
@@ -191,7 +193,7 @@ class AttackVessel extends Vessel
     }
 }
 
-class MoveState extends States.State
+class MoveState extends State
 {
     /**
      * @type {Vec2}
@@ -231,7 +233,7 @@ class MoveState extends States.State
     update(entity)
     {
         if (Distance.simple(entity.position, this.destination) < 5) {
-            entity.state = new States.IdleState();
+            entity.state = new IdleState();
             return;
         }
 
@@ -258,10 +260,3 @@ class MoveState extends States.State
         );
     }
 }
-
-const Vessels = {
-    Vessel,
-    AttackVessel
-};
-
-export default Vessels;

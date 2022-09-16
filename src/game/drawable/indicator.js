@@ -1,7 +1,7 @@
-import GraphicsDevice from '../graphics.device.js';
-import {Vec2} from '../coordinates.js';
+import {Vec2} from '../../coordinates.js';
+import {Rectangle} from '../../canvas/shapes.js';
 
-export class HealthBar extends GraphicsDevice.Rectangle
+export class HealthBar extends Rectangle
 {
     /**
      * @type {Vec2}

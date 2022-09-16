@@ -1,9 +1,9 @@
-import Entities from '../entities.js';
-import States from '../states.js';
-import Commands from '../commands.js';
-import {Distance, Vec2} from '../coordinates.js';
+import {IdleState, State} from '../state.js';
+import {DestroyCommand} from '../command.js';
+import {Distance, Vec2} from '../../coordinates.js';
+import {Entity} from '../entity.js';
 
-class TravelState extends States.State
+export class TravelState extends State
 {
     /**
      * @type {Vec2}
@@ -42,8 +42,8 @@ class TravelState extends States.State
     {
         const target = this.lookupHit(entity);
         if (target) {
-            entity.state = new States.IdleState();
-            entity.player.dispatchCommand(new Commands.DestroyCommand(entity));
+            entity.state = new IdleState();
+            entity.player.dispatchCommand(new DestroyCommand(entity));
 
             if (target.armorHealth > 0) {
                 target.armorHealth -= entity.damageToArmor();
@@ -54,7 +54,7 @@ class TravelState extends States.State
             }
 
             if (target.hullHealth < 1) {
-                entity.player.dispatchCommand(new Commands.DestroyCommand(target));
+                entity.player.dispatchCommand(new DestroyCommand(target));
             }
 
             return;
@@ -70,13 +70,13 @@ class TravelState extends States.State
         entity.position.y += ay;
 
         if (distance < 2) {
-            entity.player.dispatchCommand(new Commands.DestroyCommand(entity));
+            entity.player.dispatchCommand(new DestroyCommand(entity));
             return;
         }
 
         if (this.travelingTime < 1) {
-            entity.player.dispatchCommand(new Commands.DestroyCommand(entity));
-            entity.state = new States.IdleState();
+            entity.player.dispatchCommand(new DestroyCommand(entity));
+            entity.state = new IdleState();
             return;
         }
 
@@ -99,7 +99,7 @@ class TravelState extends States.State
     }
 }
 
-class Projectile extends Entities.Entity
+export class Projectile extends Entity
 {
     /**
      * @param {Player|*} player
@@ -150,10 +150,3 @@ class Projectile extends Entities.Entity
         );
     }
 }
-
-const Projectiles = {
-    Projectile,
-    TravelState
-};
-
-export default Projectiles;

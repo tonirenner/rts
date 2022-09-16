@@ -1,47 +1,7 @@
-import {Vec2} from './coordinates.js';
+import {Vec2} from '../coordinates.js';
+import Projection from './projection.js';
 
-class Rectangle
-{
-    filled = false;
-    color  = 'rgb(255,0,0)';
-
-    position  = new Vec2();
-    dimension = Vec2.fromScalar(1);
-
-    /**
-     * @param {number} scale
-     */
-    scale(scale)
-    {
-        this.position  = this.position.multiplyScalar(scale);
-        this.dimension = this.dimension.multiplyScalar(scale);
-    }
-}
-
-
-class Projection
-{
-    /**
-     * @param {number} width
-     * @param {number} height
-     * @returns {DOMMatrix}
-     */
-    matrix(width, height)
-    {
-        const sx = 1;
-        const sy = -1;
-        const tx = width / 2;
-        const ty = height / 2;
-
-        return new DOMMatrix([
-                                 sx, 0,
-                                 0, sy,
-                                 tx, ty
-                             ]);
-    }
-}
-
-class Canvas
+export class Canvas
 {
     /**
      * @type {HTMLCanvasElement}
@@ -87,20 +47,19 @@ class Canvas
     }
 
     /**
-     * @returns {DOMMatrix}
-     */
-    getTransform()
-    {
-        return this.context.getTransform();
-    }
-
-    /**
      * @param {string} type
      * @param {function} handler
      */
     addEventListener(type, handler)
     {
         this.screen.addEventListener(type, handler);
+    }
+
+    /**
+     * @returns {DOMMatrix}
+     */
+    getTransform()
+    {
     }
 
     /**
@@ -186,7 +145,6 @@ class Canvas
      */
     scale(x, y)
     {
-        this.context.scale(x, y);
     }
 
     /**
@@ -195,17 +153,14 @@ class Canvas
      */
     translate(x, y)
     {
-        this.context.translate(x, y);
     }
 
     save()
     {
-        this.context.save();
     }
 
     restore()
     {
-        this.context.restore();
     }
 
     /**
@@ -260,13 +215,6 @@ class Canvas
      */
     strokeRect(position, dimension, color = 'rgb(0,0,0)')
     {
-        this.context.strokeStyle = color;
-        this.context.strokeRect(
-            position.x | 0,
-            position.y | 0,
-            dimension.x | 0,
-            dimension.y | 0
-        );
     }
 
     /**
@@ -292,13 +240,6 @@ class Canvas
      */
     fillRect(position, dimension, color = 'rgb(0,0,0)')
     {
-        this.context.fillStyle = color;
-        this.context.fillRect(
-            position.x | 0,
-            position.y | 0,
-            dimension.x | 0,
-            dimension.y | 0
-        );
     }
 
     /**
@@ -314,6 +255,105 @@ class Canvas
             position.subtract(halDimension),
             dimension,
             color
+        );
+    }
+
+    /**
+     * @param {Vec2} from
+     * @param {Vec2} to
+     * @param {string} color
+     */
+    line(from, to, color = 'rgb(0,0,0)')
+    {
+    }
+
+    /**
+     * @param {CanvasImageSource|*} image
+     * @param {Vec2} position
+     * @param {number} width
+     * @param {number} height
+     */
+    drawImage(image, position, width, height)
+    {
+    }
+}
+
+export class Canvas2D extends Canvas
+{
+    /**
+     * @returns {DOMMatrix}
+     */
+    getTransform()
+    {
+        return this.context.getTransform();
+    }
+
+    clear()
+    {
+        this.fillRect(
+            new Vec2(-this.halfScreenWidth, this.halfScreenHeight),
+            new Vec2(this.screenWidth, -this.screenHeight),
+            this.clearColor
+        );
+    }
+
+    /**
+     * @param {number} x
+     * @param {number} y
+     */
+    scale(x, y)
+    {
+        this.context.scale(x, y);
+    }
+
+    /**
+     * @param {number} x
+     * @param {number} y
+     */
+    translate(x, y)
+    {
+        this.context.translate(x, y);
+    }
+
+    save()
+    {
+        this.context.save();
+    }
+
+    restore()
+    {
+        this.context.restore();
+    }
+
+    /**
+     * @param {Vec2} position
+     * @param {Vec2} dimension
+     * @param {string} color
+     */
+    strokeRect(position, dimension, color = 'rgb(0,0,0)')
+    {
+        this.context.strokeStyle = color;
+        this.context.strokeRect(
+            position.x | 0,
+            position.y | 0,
+            dimension.x | 0,
+            dimension.y | 0
+        );
+    }
+
+    /**
+     * @param {Vec2} position
+     * @param {Vec2} dimension
+     * @param {string} color
+     */
+    fillRect(position, dimension, color = 'rgb(0,0,0)')
+    {
+        this.context.fillStyle = color;
+        this.context.fillRect(
+            position.x | 0,
+            position.y | 0,
+            dimension.x | 0,
+            dimension.y | 0
         );
     }
 
@@ -349,11 +389,3 @@ class Canvas
         );
     }
 }
-
-
-const GraphicsDevice = {
-    Canvas,
-    Rectangle
-};
-
-export default GraphicsDevice;

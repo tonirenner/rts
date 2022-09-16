@@ -1,4 +1,4 @@
-import {Vec2} from './coordinates.js';
+import {Vec2} from '../coordinates.js';
 
 export class Bounds2D
 {

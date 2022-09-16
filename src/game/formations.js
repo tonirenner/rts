@@ -1,8 +1,8 @@
-import {Vec2} from './coordinates.js';
+import {Vec2} from '../coordinates.js';
 
 const KEEP_AWAY_RADIUS = 50;
 
-class Formation
+export class Formation
 {
     /**
      * @param {UnitGroup} units
@@ -15,7 +15,7 @@ class Formation
     }
 }
 
-class SquareFormation extends Formation
+export class SquareFormation extends Formation
 {
     /**
      * @param {UnitGroup} units
@@ -59,10 +59,3 @@ class SquareFormation extends Formation
         return destinations;
     }
 }
-
-const Formations = {
-    Formation,
-    SquareFormation
-};
-
-export default Formations;

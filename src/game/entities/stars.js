@@ -1,6 +1,6 @@
-import Entities from './entities.js';
+import {Entity} from '../entity.js';
 
-class Star extends Entities.Unit
+export default class Star extends Entity
 {
     /**
      * @type {Image|*}
@@ -28,9 +28,3 @@ class Star extends Entities.Unit
         );
     }
 }
-
-const Stars = {
-    Star
-};
-
-export default Stars;

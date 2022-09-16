@@ -1,11 +1,11 @@
-import {Vec2} from './coordinates.js';
+import {Vec2} from '../coordinates.js';
 import Queue from './queue.js';
 
-class Command
+export class Command
 {
 }
 
-class SelectCommand extends Command
+export class SelectCommand extends Command
 {
     /**
      * @type {Vec2}
@@ -29,7 +29,7 @@ class SelectCommand extends Command
     }
 }
 
-class MoveCommand extends Command
+export class MoveCommand extends Command
 {
     /**
      * @type {Entity}
@@ -54,7 +54,7 @@ class MoveCommand extends Command
     }
 }
 
-class LockOnTargetCommand extends Command
+export class LockOnTargetCommand extends Command
 {
     /**
      * @type {Entity}
@@ -78,7 +78,7 @@ class LockOnTargetCommand extends Command
     }
 }
 
-class LunchProjectileCommand extends Command
+export class LunchProjectileCommand extends Command
 {
     /**
      * @type {Projectile}
@@ -96,7 +96,7 @@ class LunchProjectileCommand extends Command
     }
 }
 
-class DestroyCommand extends Command
+export class DestroyCommand extends Command
 {
     /**
      * @type {Entity}
@@ -114,7 +114,7 @@ class DestroyCommand extends Command
     }
 }
 
-class CommandQueue extends Queue
+export class CommandQueue extends Queue
 {
     /**
      * @param {Command} command
@@ -145,15 +145,3 @@ class CommandQueue extends Queue
         return super.peek();
     }
 }
-
-const Commands = {
-    CommandQueue,
-    Command,
-    MoveCommand,
-    LockOnTargetCommand,
-    LunchProjectileCommand,
-    DestroyCommand
-};
-
-export default Commands;
-

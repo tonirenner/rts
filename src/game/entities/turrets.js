@@ -1,14 +1,10 @@
-import Entities from '../entities.js';
-import States from '../states.js';
-import Projectiles from './projectiles.js';
-import Vessels from '../vessel/vessel.js';
-import Commands from '../commands.js';
+import {IdleState, State} from '../state.js';
+import {Entity} from '../entity.js';
+import {Projectile} from './projectiles.js';
+import {AttackVessel} from './vessel.js';
+import {LunchProjectileCommand} from '../command.js';
 
-class IdleState extends States.IdleState
-{
-}
-
-class AttackTarget extends States.State
+export class AttackTarget extends State
 {
     /**
      * @param {Turret|Entity} entity
@@ -16,7 +12,7 @@ class AttackTarget extends States.State
     update(entity)
     {
         if (!entity.isTargetAlive()) {
-            this.state = new States.IdleState();
+            this.state = new IdleState();
             return;
         }
 
@@ -33,7 +29,7 @@ class AttackTarget extends States.State
     }
 }
 
-class TurretGroup extends Entities.Entity
+export class TurretGroup extends Entity
 {
     /**
      * @type {Turret|Entity[]}
@@ -81,7 +77,7 @@ class TurretGroup extends Entities.Entity
     }
 }
 
-class Turret extends Entities.Entity
+export class Turret extends Entity
 {
     /**
      * @type {Entity|*}
@@ -120,7 +116,7 @@ class Turret extends Entities.Entity
      */
     lunchProjectile()
     {
-        return new Projectiles.Projectile(this.player);
+        return new Projectile(this.player);
     }
 
     /**
@@ -149,7 +145,7 @@ class Turret extends Entities.Entity
      */
     isTargetAlive()
     {
-        if (this.target instanceof Vessels.AttackVessel) {
+        if (this.target instanceof AttackVessel) {
             return this.target.hullHealth > 0;
         }
 
@@ -162,7 +158,7 @@ class Turret extends Entities.Entity
         projectile.position = this.mountedOn.position.clone();
         projectile.travelDirection(this.target.position.clone());
 
-        this.player.dispatchCommand(new Commands.LunchProjectileCommand(projectile));
+        this.player.dispatchCommand(new LunchProjectileCommand(projectile));
 
         this.coolDown = this.minCoolDown();
     }
@@ -176,11 +172,3 @@ class Turret extends Entities.Entity
         this.state  = new AttackTarget();
     }
 }
-
-const Turrets = {
-    Turret,
-    TurretGroup,
-    IdleState
-};
-
-export default Turrets;

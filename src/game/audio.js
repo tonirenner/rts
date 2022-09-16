@@ -1,6 +1,6 @@
 import Queue from './queue.js';
 
-class AudioPlayer
+export class AudioPlayer
 {
     /**
      * @type {SpeechSynthesis}
@@ -35,19 +35,11 @@ class AudioPlayer
     }
 }
 
-
-class AudioQueue extends Queue
+export class AudioQueue extends Queue
 {
 }
 
-const Audio = {
-    AudioQueue,
-    AudioPlayer,
-    COMMANDS: {
-        MOVING_TO_POSITION: new SpeechSynthesisUtterance('moving to position'),
-        TARGET_CONFIRMED:   new SpeechSynthesisUtterance('target confirmed')
-    }
+export const AUDIO_COMMANDS = {
+    MOVING_TO_POSITION: new SpeechSynthesisUtterance('moving to position'),
+    TARGET_CONFIRMED:   new SpeechSynthesisUtterance('target confirmed')
 };
-
-export default Audio;
-

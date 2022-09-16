@@ -1,20 +1,22 @@
-import Commands from './src/commands.js';
-import Vessels from './src/vessel/vessel.js';
-import {Player, Universe} from './src/universe.js';
-import Turrets from './src/turrets/turrets.js';
-import GraphicsDevice from './src/graphics.device.js';
-import LaserTurret from './src/turrets/laser.js';
-import Formations from './src/formations.js';
-import Camera from './src/camera.js';
-import Stars from './src/stars.js';
-import Planets from './src/planets.js';
-import GameLoop from './src/loop.js';
-import Audio from './src/audio.js';
+import {SquareFormation} from './src/game/formations.js';
+import {Canvas2D} from './src/canvas/canvas.js';
+import Universe from './src/game/universe.js';
+import Camera from './src/game/camera.js';
+import {Player} from './src/game/player.js';
+import {AttackVessel} from './src/game/entities/vessel.js';
+import {Turret} from './src/game/entities/turrets.js';
+import {LaserTurret} from './src/game/entities/laser.js';
+import Star from './src/game/entities/stars.js';
+import {Planet} from './src/game/entities/planets.js';
+import GameLoop from './src/game/loop.js';
+import {LockOnTargetCommand, MoveCommand} from './src/game/command.js';
+import {AUDIO_COMMANDS} from './src/game/audio.js';
+
 
 const debug = document.querySelector('.app > .debug');
 
-const formation   = new Formations.SquareFormation;
-const canvas      = new GraphicsDevice.Canvas(document.querySelector('.app > canvas'));
+const formation   = new SquareFormation();
+const canvas      = new Canvas2D(document.querySelector('.app > canvas'));
 canvas.width      = 1024;
 canvas.height     = 768;
 canvas.clearColor = 'rgb(28,26,26)';
@@ -28,33 +30,33 @@ const enemyPlayer = new Player(universe);
 enemyPlayer.color = 'rgb(255,0,0)';
 universe.players.push(enemyPlayer);
 
-const yourVessel = new Vessels.AttackVessel(universe.player);
-yourVessel.mountTurret(new Turrets.Turret(universe.player));
+const yourVessel = new AttackVessel(universe.player);
+yourVessel.mountTurret(new Turret(universe.player));
 yourVessel.mountTurret(new LaserTurret(universe.player));
 yourVessel.position.x = 150;
 yourVessel.position.y = -225;
 
-const yourVessel2 = new Vessels.AttackVessel(universe.player);
-yourVessel2.mountTurret(new Turrets.Turret(universe.player));
+const yourVessel2 = new AttackVessel(universe.player);
+yourVessel2.mountTurret(new Turret(universe.player));
 yourVessel2.mountTurret(new LaserTurret(universe.player));
 yourVessel2.position.x = 200;
 yourVessel2.position.y = -200;
 
-const enemyVessel = new Vessels.AttackVessel(enemyPlayer);
-enemyVessel.mountTurret(new Turrets.Turret(enemyPlayer));
+const enemyVessel = new AttackVessel(enemyPlayer);
+enemyVessel.mountTurret(new Turret(enemyPlayer));
 enemyVessel.position.x = -200;
 enemyVessel.position.y = 200;
 
-universe.player.units.add(yourVessel);
-universe.player.units.add(yourVessel2);
-enemyPlayer.units.add(enemyVessel);
+universe.player.add(yourVessel);
+universe.player.add(yourVessel2);
+enemyPlayer.add(enemyVessel);
 
-const star        = new Stars.Star(universe.player);
-const planet      = new Planets.Planet(universe.player);
+const star        = new Star(universe.player);
+const planet      = new Planet(universe.player);
 planet.position.x = 200;
 planet.position.y = -300;
-universe.entities.add(star);
-universe.entities.add(planet);
+universe.add(star);
+universe.add(planet);
 
 universe.debug = true;
 
@@ -104,6 +106,7 @@ canvas.addEventListener('click', e => {
         universe.camera.worldToScreen(worldCoordinates)
     );
     const unit = universe.player.units.findOneByCoordinates(worldCoordinates);
+
     if (unit) {
         unit.isSelected = true;
         universe.player.selectedUnits.add(unit);
@@ -116,18 +119,11 @@ canvas.addEventListener('click', e => {
     }
 
     if (universe.player.selectedUnits.length < 2) {
-        universe.dispatchCommand(
-            new Commands.MoveCommand(universe.player.selectedUnits.at(0), worldCoordinates)
-        );
+        universe.dispatchCommand(new MoveCommand(universe.player.selectedUnits.at(0), worldCoordinates));
     } else {
         const destinations = formation.computeDestinations(universe.player.selectedUnits, worldCoordinates);
         for (let i in destinations) {
-            universe.dispatchCommand(
-                new Commands.MoveCommand(
-                    universe.player.selectedUnits.at(i),
-                    destinations[i]
-                )
-            );
+            universe.dispatchCommand(new MoveCommand(universe.player.selectedUnits.at(i), destinations[i]));
         }
     }
 
@@ -142,15 +138,15 @@ canvas.addEventListener('click', e => {
         target = universe.players[i].units.findOneByCoordinates(worldCoordinates);
 
         if (target) {
-            universe.dispatchAudio(Audio.COMMANDS.TARGET_CONFIRMED);
-            universe.dispatchCommand(new Commands.LockOnTargetCommand(universe.player.selectedUnits, target));
+            universe.dispatchAudio(AUDIO_COMMANDS.TARGET_CONFIRMED);
+            universe.dispatchCommand(new LockOnTargetCommand(universe.player.selectedUnits, target));
 
             console.log('units lock on target');
             return;
         }
     }
 
-    universe.dispatchAudio(Audio.COMMANDS.MOVING_TO_POSITION);
+    universe.dispatchAudio(AUDIO_COMMANDS.MOVING_TO_POSITION);
 });
 
 gameLoop.start();

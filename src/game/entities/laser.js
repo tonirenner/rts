@@ -1,10 +1,10 @@
-import Turrets from '../turrets/turrets.js';
-import Projectiles from '../turrets/projectiles.js';
-import States from '../states.js';
-import Commands from '../commands.js';
-import {Vec2} from '../coordinates.js';
+import {IdleState, State} from '../state.js';
+import {DestroyCommand} from '../command.js';
+import {Projectile} from './projectiles.js';
+import {Vec2} from '../../coordinates.js';
+import {Turret} from './turrets.js';
 
-class BeamState extends States.State
+export class BeamState extends State
 {
     /**
      * @type {Turret}
@@ -44,12 +44,12 @@ class BeamState extends States.State
 
         const target = this.lookupHit(entity);
         if (!target) {
-            entity.player.dispatchCommand(new Commands.DestroyCommand(entity));
+            entity.player.dispatchCommand(new DestroyCommand(entity));
             return;
         }
 
         if (this.beamDuration < 1) {
-            entity.player.dispatchCommand(new Commands.DestroyCommand(entity));
+            entity.player.dispatchCommand(new DestroyCommand(entity));
         }
 
         if (target.shieldHealth > 0) {
@@ -65,7 +65,7 @@ class BeamState extends States.State
         }
 
         if (target.hullHealth < 1) {
-            entity.player.dispatchCommand(new Commands.DestroyCommand(target));
+            entity.player.dispatchCommand(new DestroyCommand(target));
         }
     }
 
@@ -100,7 +100,7 @@ class BeamState extends States.State
     }
 }
 
-class LaserBeamProjectile extends Projectiles.Projectile
+export class LaserBeamProjectile extends Projectile
 {
     /**
      * @type {Turret}
@@ -147,8 +147,7 @@ class LaserBeamProjectile extends Projectiles.Projectile
     }
 }
 
-
-export default class LaserTurret extends Turrets.Turret
+export class LaserTurret extends Turret
 {
     /**
      * @param {Player|*} player
@@ -157,7 +156,7 @@ export default class LaserTurret extends Turrets.Turret
     {
         super(player);
 
-        this.state = new Turrets.IdleState();
+        this.state = new IdleState();
     }
 
     /**

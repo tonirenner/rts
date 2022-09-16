@@ -1,4 +1,4 @@
-class State
+export class State
 {
     /**
      * @param {Entity|*} entity
@@ -15,13 +15,6 @@ class State
     }
 }
 
-class IdleState extends State
+export class IdleState extends State
 {
 }
-
-const States = {
-    State,
-    IdleState
-};
-
-export default States;

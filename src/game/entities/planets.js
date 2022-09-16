@@ -1,6 +1,6 @@
-import Entities from './entities.js';
+import {Entity} from '../entity.js';
 
-class Planet extends Entities.Unit
+export class Planet extends Entity
 {
     /**
      * @type {Image|*}
@@ -28,9 +28,3 @@ class Planet extends Entities.Unit
         );
     }
 }
-
-const Planets = {
-    Planet
-};
-
-export default Planets;
