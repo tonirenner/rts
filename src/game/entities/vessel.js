@@ -1,7 +1,7 @@
 import {HealthBar} from '../drawable/indicator.js';
 import {Unit} from '../unit.js';
 import {IdleState, State} from '../state.js';
-import {Distance, Vec2} from '../../coordinates.js';
+import {Distance, Vec2} from '../../math.js';
 import {TurretGroup} from './turrets.js';
 import {Rectangle} from '../../canvas/shapes.js';
 

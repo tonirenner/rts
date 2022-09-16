@@ -1,4 +1,4 @@
-import {Vec2} from '../coordinates.js';
+import {Vec2} from '../math.js';
 
 const KEEP_AWAY_RADIUS = 50;
 

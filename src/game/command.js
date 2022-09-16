@@ -1,4 +1,4 @@
-import {Vec2} from '../coordinates.js';
+import {Vec2} from '../math.js';
 import Queue from './queue.js';
 
 export class Command

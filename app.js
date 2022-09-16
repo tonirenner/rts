@@ -26,6 +26,8 @@ const universe  = new Universe(canvas);
 universe.camera = new Camera(universe);
 universe.player = new Player(universe);
 
+universe.camera.origin.scale = 0.5;
+
 const enemyPlayer = new Player(universe);
 enemyPlayer.color = 'rgb(255,0,0)';
 universe.players.push(enemyPlayer);
@@ -72,7 +74,7 @@ gameLoop.onStats  = () => {
 
     debug.innerText = `
     scale: ${universe.camera.origin.scale}
-    mouse: ${JSON.stringify(universe.camera.origin.screenPosition)}
+    mouse: ${JSON.stringify(universe.camera.screenToWorld(universe.camera.origin.screenPosition))}
     offset: ${JSON.stringify(universe.camera.origin.offset)}
     fps: ${Math.round(gameLoop.fps)}
     `;

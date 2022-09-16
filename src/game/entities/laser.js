@@ -1,7 +1,7 @@
 import {IdleState, State} from '../state.js';
 import {DestroyCommand} from '../command.js';
 import {Projectile} from './projectiles.js';
-import {Vec2} from '../../coordinates.js';
+import {Vec2} from '../../math.js';
 import {Turret} from './turrets.js';
 
 export class BeamState extends State

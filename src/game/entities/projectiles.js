@@ -1,6 +1,6 @@
 import {IdleState, State} from '../state.js';
 import {DestroyCommand} from '../command.js';
-import {Distance, Vec2} from '../../coordinates.js';
+import {Distance, Vec2} from '../../math.js';
 import {Entity} from '../entity.js';
 
 export class TravelState extends State

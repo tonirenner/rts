@@ -1,4 +1,4 @@
-import {FloatingOrigin, Vec2} from '../coordinates.js';
+import {FloatingOrigin, Vec2} from '../math.js';
 
 export default class Camera
 {

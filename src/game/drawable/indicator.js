@@ -1,4 +1,4 @@
-import {Vec2} from '../../coordinates.js';
+import {Vec2} from '../../math.js';
 import {Rectangle} from '../../canvas/shapes.js';
 
 export class HealthBar extends Rectangle

@@ -1,4 +1,4 @@
-import {Vec2} from '../coordinates.js';
+import {Vec2} from '../math.js';
 import Projection from './projection.js';
 
 export class Canvas
