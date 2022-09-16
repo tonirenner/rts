@@ -33,7 +33,7 @@ export class Vec2
      */
     median()
     {
-        return Math.abs((this.x + this.y) / 2);
+        return (Math.abs(this.x) + Math.abs(this.y)) / 2;
     }
 
     /**
