@@ -55,6 +55,41 @@ export class Vec2
 
     /**
      * @param {Vec2} v
+     * @returns {number}
+     */
+    dot(v)
+    {
+        return this.x * v.x + this.y * v.y;
+    }
+
+    /**
+     * @returns {number}
+     */
+    length()
+    {
+        return Math.sqrt(this.x * this.x + this.y * this.y);
+    }
+
+    /**
+     * @param {Vec2} v
+     * @returns {Vec2}
+     */
+    min(v)
+    {
+        return new Vec2(Math.min(this.x, v.x), Math.min(this.y, v.y));
+    }
+
+    /**
+     * @param {Vec2} v
+     * @returns {Vec2}
+     */
+    max(v)
+    {
+        return new Vec2(Math.max(this.x, v.x), Math.max(this.y, v.y));
+    }
+
+    /**
+     * @param {Vec2} v
      * @returns {Vec2}
      */
     subtract(v)
