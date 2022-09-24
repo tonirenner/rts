@@ -1,7 +1,7 @@
 import {HealthBar} from '../drawable/indicator.js';
 import {Unit} from '../unit.js';
 import {IdleState, State} from '../state.js';
-import {Distance, Vec2} from '../../math.js';
+import {Distance2, Vec2} from '../../math.js';
 import {TurretGroup} from './turrets.js';
 import {Rectangle} from '../../canvas/shapes.js';
 
@@ -232,7 +232,7 @@ class MoveState extends State
      */
     update(entity)
     {
-        if (Distance.simple(entity.position, this.destination) < 5) {
+        if (Distance2.simple(entity.position, this.destination) < 5) {
             entity.state = new IdleState();
             return;
         }

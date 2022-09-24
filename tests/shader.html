@@ -5,73 +5,15 @@
     <title>Shader (CPU)</title>
 </head>
 <body>
-<canvas width="800" height="600"></canvas>
+<canvas width="1024" height="768"></canvas>
 <script type="module">
 
-    import {rgba} from './functions.js';
-
-    class Shader
-    {
-        /**  @type {number} */
-        width;
-
-        /** @type {number} */
-        height;
-
-        /**
-         * @param {number} width
-         * @param {number} height
-         */
-        constructor(width, height)
-        {
-            this.width  = width;
-            this.height = height;
-        }
-
-        /**
-         * @param {number} x
-         * @returns {number}
-         */
-        u(x)
-        {
-            return x / this.width;
-        }
-
-        /**
-         * @param {number} y
-         * @returns {number}
-         */
-        v(y)
-        {
-            return y / this.height;
-        }
-
-        /**
-         * @param {number} x
-         * @param {number} y
-         * @returns {string}
-         */
-        shade(x, y)
-        {
-            return 'rgba(127,0,0,1)';
-        }
-    }
-
-    class SampleShader extends Shader
-    {
-        /**
-         * @param {number} x
-         * @param {number} y
-         * @returns {string}
-         */
-        shade(x, y)
-        {
-            return rgba(1, 0, 0, 1);
-        }
-    }
+    import {Vec2} from '../src/math.js';
+    import StarsShader from './stars.js';
 
     const canvas  = document.querySelector('canvas');
     const context = canvas.getContext('2d');
+    context.imageSmoothingQuality = 'high';
 
     context.fillStyle = 'rgb(0,0,0)';
     context.fillRect(0, 0, canvas.width, canvas.height);
@@ -82,11 +24,12 @@
         context.fillRect(x, y, 1, 1);
     }
 
-    const shader = new SampleShader(canvas.width, canvas.height);
+    const shader = new StarsShader(canvas.width, canvas.height);
 
-    for (let y = 0; y < canvas.height; y++) {
-        for (let x = 0; x < canvas.width; x++) {
-            pixel(x, y, shader.shade(x, y));
+    const coordinates = new Vec2();
+    for (coordinates.y = 0; coordinates.y < canvas.height; coordinates.y++) {
+        for (coordinates.x = 0; coordinates.x < canvas.width; coordinates.x++) {
+            pixel(coordinates.x, coordinates.y, shader.shade(coordinates));
         }
     }
 </script>

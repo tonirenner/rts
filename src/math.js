@@ -1,12 +1,9 @@
 export class Vec2
 {
-    /**
-     * @type {number}
-     */
+    /** @type {number} */
     x;
-    /**
-     * @type {number}
-     */
+
+    /** @type {number} */
     y;
 
     /**
@@ -110,6 +107,16 @@ export class Vec2
      * @param {Vec2} v
      * @returns {Vec2}
      */
+    divide(v)
+    {
+        return new Vec2(this.x / v.x, this.y / v.y);
+    }
+
+
+    /**
+     * @param {Vec2} v
+     * @returns {Vec2}
+     */
     multiply(v)
     {
         return new Vec2(this.x * v.x, this.y * v.y);
@@ -154,7 +161,156 @@ export class Vec2
 
 }
 
-export class Distance
+export class Vec3
+{
+    /** @type {number} */
+    x;
+
+    /** @type {number} */
+    y;
+
+    /** @type {number} */
+    z;
+
+    /**
+     * @param {number} x
+     * @param {number} y
+     * @param {number} z
+     */
+    constructor(x = 0, y = 0, z = 0)
+    {
+        this.x = x;
+        this.y = y;
+        this.z = z;
+    }
+
+    /**
+     * @param {number} s
+     * @returns {Vec3}
+     */
+    static fromScalar(s)
+    {
+        return new Vec3(s, s, s);
+    }
+
+    /**
+     * @returns {number}
+     */
+    median()
+    {
+        return (Math.abs(this.x) + Math.abs(this.y) + Math.abs(this.z)) / 2;
+    }
+
+    /**
+     * @returns {Vec3}
+     */
+    clone()
+    {
+        return new Vec3(this.x, this.y, this.z);
+    }
+
+    /**
+     * @param {Vec3} v
+     * @returns {number}
+     */
+    dot(v)
+    {
+        return this.x * v.x + this.y * v.y + this.z + v.z;
+    }
+
+    /**
+     * @returns {number}
+     */
+    length()
+    {
+        return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
+    }
+
+    /**
+     * @param {Vec3} v
+     * @returns {Vec3}
+     */
+    min(v)
+    {
+        return new Vec3(Math.min(this.x, v.x), Math.min(this.y, v.y), Math.min(this.z, v.z));
+    }
+
+    /**
+     * @param {Vec3} v
+     * @returns {Vec3}
+     */
+    max(v)
+    {
+        return new Vec3(Math.max(this.x, v.x), Math.max(this.y, v.y), Math.max(this.z, v.z));
+    }
+
+    /**
+     * @param {Vec3} v
+     * @returns {Vec3}
+     */
+    subtract(v)
+    {
+        return new Vec3(this.x - v.x, this.y - v.y, this.z - v.z);
+    }
+
+    /**
+     * @param {Vec3} v
+     * @returns {Vec3}
+     */
+    add(v)
+    {
+        return new Vec3(this.x + v.x, this.y + v.y, this.z + v.z);
+    }
+
+    /**
+     * @param {Vec3} v
+     * @returns {Vec3}
+     */
+    multiply(v)
+    {
+        return new Vec3(this.x * v.x, this.y * v.y, this.z * v.z);
+    }
+
+
+    /**
+     * @param {number} s
+     * @returns {Vec3}
+     */
+    addScalar(s)
+    {
+        return new Vec3(this.x + s, this.y + s, this.z + s);
+    }
+
+    /**
+     * @param {number} s
+     * @returns {Vec3}
+     */
+    subtractScalar(s)
+    {
+        return new Vec3(this.x - s, this.y - s, this.z - s);
+    }
+
+    /**
+     * @param {number} s
+     * @returns {Vec3}
+     */
+    divideScalar(s)
+    {
+        return new Vec3(this.x / s, this.y / s, this.z / s);
+    }
+
+    /**
+     * @param {number} s
+     * @returns {Vec3}
+     */
+    multiplyScalar(s)
+    {
+        return new Vec3(this.x * s, this.y * s, this.z * s);
+    }
+
+}
+
+export class Distance2
 {
     /**
      * @param {Vec2} a

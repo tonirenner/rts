@@ -1,4 +1,100 @@
-import {Vec2} from '../src/math.js';
+import {Vec2, Vec3} from '../src/math.js';
+
+/**
+ * @param {number} x
+ * @param {number} y
+ *
+ * @returns {Vec2}
+ */
+export const vec2 = (x = 0, y = 0) => {
+    return new Vec2(x, y);
+};
+
+/**
+ * @param {number} s
+ *
+ * @returns {Vec2}
+ */
+export const vec2s = (s = 0) => {
+    return Vec2.fromScalar(s);
+};
+
+/**
+ * @param {number} x
+ * @param {number} y
+ * @param {number} z
+ *
+ * @returns {Vec3}
+ */
+export const vec3 = (x = 0, y = 0, z = 0) => {
+    return new Vec3(x, y, z);
+};
+
+/**
+ * @param {number} s
+ *
+ * @returns {Vec3}
+ */
+export const vec3s = (s = 0) => {
+    return Vec3.fromScalar(s);
+};
+
+/**
+ * @param {number} x
+ * @param {number} y
+ *
+ * @returns {number}
+ */
+export const pow = (x, y) => {
+    return Math.pow(x, y);
+};
+
+/**
+ * @param {Vec2} a
+ * @param {Vec2} b
+ *
+ * @returns {Vec2}
+ */
+export const pow2 = (a, b) => {
+    return new Vec2(pow(a.x, b.x), pow(a.y, b.y));
+};
+
+/**
+ * @param {Vec3} a
+ * @param {Vec3} b
+ *
+ * @returns {Vec3}
+ */
+export const pow3 = (a, b) => {
+    return new Vec3(pow(a.x, b.x), pow(a.y, b.y), pow(a.z, b.z));
+};
+
+/**
+ * @param {number} x
+ *
+ * @returns {number}
+ */
+export const floor = x => {
+    return Math.floor(x);
+};
+
+/**
+ * @param {Vec2} v
+ *
+ * @returns {Vec2}
+ */
+export const floor2 = v => {
+    return new Vec2(floor(v.x), floor(v.y));
+};
+
+/**
+ * @param {Vec3} v
+ *
+ * @returns {Vec3}
+ */
+export const floor3 = v => {
+    return new Vec3(floor(v.x), floor(v.y), floor(v.z));
+};
 
 /**
  * @param {number} a
@@ -18,6 +114,16 @@ export const mod = (a, b) => {
  */
 export const mod2 = (a, b) => {
     return new Vec2(a.x % b.x, a.y % b.y);
+};
+
+/**
+ * @param {Vec3} a
+ * @param {Vec3} b
+ *
+ * @returns {Vec3}
+ */
+export const mod3 = (a, b) => {
+    return new Vec3(a.x % b.x, a.y % b.y, a.z % b.z);
 };
 
 /**
@@ -44,9 +150,7 @@ export const cos = v => {
  * @returns {Vec2}
  */
 export const sin2 = v => {
-    v.x = sin(v.x);
-    v.y = sin(v.y);
-    return v;
+    return new Vec2(sin(v.x), sin(v.y));
 };
 
 /**
@@ -55,9 +159,25 @@ export const sin2 = v => {
  * @returns {Vec2}
  */
 export const cos2 = v => {
-    v.x = cos(v.x);
-    v.y = cos(v.y);
-    return v;
+    return new Vec2(cos(v.x), cos(v.y));
+};
+
+/**
+ * @param {Vec3} v
+ *
+ * @returns {Vec3}
+ */
+export const sin3 = v => {
+    return new Vec3(sin(v.x), sin(v.y), sin(v.z));
+};
+
+/**
+ * @param {Vec3} v
+ *
+ * @returns {Vec3}
+ */
+export const cos3 = v => {
+    return new Vec3(cos(v.x), cos(v.y), cos(v.z));
 };
 
 /**
@@ -75,9 +195,16 @@ export const fract = x => {
  * @returns {Vec2}
  */
 export const fract2 = v => {
-    v.x = fract(v.x);
-    v.x = fract(v.y);
-    return v;
+    return new Vec2(fract(v.x), fract(v.y));
+};
+
+/**
+ * @param {Vec3} v
+ *
+ * @returns {Vec3}
+ */
+export const fract3 = v => {
+    return new Vec3(fract(v.x), fract(v.y), fract(v.z));
 };
 
 /**
@@ -156,6 +283,15 @@ export const min2 = (a, b) => {
  * @param {Vec2} b
  * @returns {number}
  */
+export const dot2 = (a, b) => {
+    return a.dot(b);
+};
+
+/**
+ * @param {Vec3} a
+ * @param {Vec3} b
+ * @returns {number}
+ */
 export const dot = (a, b) => {
     return a.dot(b);
 };
@@ -165,7 +301,16 @@ export const dot = (a, b) => {
  *
  * @returns {number}
  */
-export const length = v => {
+export const length2 = v => {
+    return v.length();
+};
+
+/**
+ * @param {Vec3} v
+ *
+ * @returns {number}
+ */
+export const length3 = v => {
     return v.length();
 };
 
@@ -180,6 +325,7 @@ export const rgba = (r, g, b, a) => {
     r = clamp(r * 255, 0, 255) | 0;
     g = clamp(g * 255, 0, 255) | 0;
     b = clamp(b * 255, 0, 255) | 0;
+    a = clamp(a, 0.0, 1.0);
 
     return `rgba(${r},${g},${b},${a.toFixed(2)})`;
 };

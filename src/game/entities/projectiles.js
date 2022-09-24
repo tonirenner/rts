@@ -1,6 +1,6 @@
 import {IdleState, State} from '../state.js';
 import {DestroyCommand} from '../command.js';
-import {Distance, Vec2} from '../../math.js';
+import {Distance2, Vec2} from '../../math.js';
 import {Entity} from '../entity.js';
 
 export class TravelState extends State
@@ -60,7 +60,7 @@ export class TravelState extends State
             return;
         }
 
-        const distance = Distance.simple(entity.position, this.destination);
+        const distance = Distance2.simple(entity.position, this.destination);
         const angle    = entity.position.angle(this.destination);
 
         const ax = Math.cos(angle) * this.velocity;
