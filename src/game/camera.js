@@ -61,8 +61,7 @@ export default class Camera
      */
     screenToWorld(coordinates)
     {
-        const point = new DOMPoint(coordinates.x, coordinates.y)
-            .matrixTransform(this.projection.inverse());
+        const point = this.projection.inverse().transformPoint(new DOMPoint(coordinates.x, coordinates.y));
 
         return new Vec2(point.x, point.y);
     }
@@ -73,8 +72,7 @@ export default class Camera
      */
     worldToScreen(coordinates)
     {
-        const point = new DOMPoint(coordinates.x, coordinates.y)
-            .matrixTransform(this.projection);
+        const point = this.projection.transformPoint(new DOMPoint(coordinates.x, coordinates.y));
 
         return new Vec2(point.x, point.y);
     }
