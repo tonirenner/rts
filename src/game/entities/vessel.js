@@ -7,10 +7,11 @@ import {Rectangle} from '../../canvas/shapes.js';
 
 export class Vessel extends Unit
 {
-    /**
-     * @type {boolean}
-     */
+    /** @type {boolean} */
     isSelected = false;
+
+    /** @type {number} */
+    depth = 1;
 
     /**
      * @param {Player|*} player
@@ -88,9 +89,9 @@ export class AttackVessel extends Vessel
 
         this.ship      = new Rectangle();
         this.box       = new Rectangle();
-        this.shieldBar = new HealthBar(this.maxShieldHealth(), new Vec2(-10, -13));
-        this.armorBar  = new HealthBar(this.maxArmorHealth(), new Vec2(-10, -16));
-        this.hullBar   = new HealthBar(this.maxHullHealth(), new Vec2(-10, -19));
+        this.shieldBar = new HealthBar(this.maxShieldHealth(), new Vec2(-5, -10));
+        this.armorBar  = new HealthBar(this.maxArmorHealth(), new Vec2(-5, -12));
+        this.hullBar   = new HealthBar(this.maxHullHealth(), new Vec2(-5, -14));
 
         this.box.color      = 'rgba(113,239,85, 0.5)';
         this.armorBar.color = 'rgb(130,130,141)';
@@ -145,8 +146,8 @@ export class AttackVessel extends Vessel
         const position = this.position.clone();
 
         this.ship.position  = position.clone();
-        this.ship.dimension = Vec2.fromScalar(20);
-        this.ship.color     = this.player.color;
+        this.ship.dimension = Vec2.fromScalar(10);
+        this.ship.color     = this.isSelected ? 'rgba(131,243,107,0.9)' : this.player.color;
 
         this.shieldBar.position = position.clone();
         this.armorBar.position  = position.clone();
@@ -165,16 +166,6 @@ export class AttackVessel extends Vessel
 
     render()
     {
-        const position = this.position.clone();
-
-        if (this.isSelected) {
-            this.box.position.x  = position.x;
-            this.box.position.y  = position.y - 5;
-            this.box.dimension.x = 36;
-            this.box.dimension.y = 48;
-            this.player.universe.canvas.drawRectangleCentered(this.box);
-        }
-
         this.player.universe.canvas.drawRectangleCentered(this.ship);
         this.player.universe.canvas.drawRectangle(this.shieldBar);
         this.player.universe.canvas.drawRectangle(this.armorBar);

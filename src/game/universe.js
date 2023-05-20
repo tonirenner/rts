@@ -35,6 +35,11 @@ export default class Universe
     /** @type {Player[]} */
     players = [];
 
+    /**
+     * @type {number}
+     */
+    lod = 0;
+
     /** @type {boolean} */
     debug = false;
 
@@ -93,6 +98,8 @@ export default class Universe
 
     update()
     {
+        this.lod = Math.min((this.camera.origin.scale / 2) | 0, 2) + 1;
+
         this.processAudioQueue();
         this.processCommandQueue();
         this.scene.update();

@@ -4,15 +4,14 @@ import {Bounds2D} from './bounds.js';
 
 export class Object2D
 {
-    /**
-     * @type {Vec2}
-     */
+    /** @type {Vec2} */
     position = new Vec2();
 
-    /**
-     * @type {Bounds2D}
-     */
+    /** @type {Bounds2D} */
     bounds2d = new Bounds2D(new Vec2(), new Vec2());
+
+    /** @type {number} */
+    depth = 0;
 
     /**
      * @returns {Bounds2D}
@@ -66,6 +65,13 @@ export class Group extends Object2D
         return null;
     }
 
+    sortByDepth()
+    {
+        this.objects = this.objects.sort((a, b) => {
+            return a.depth - b.depth;
+        });
+    }
+
     /**
      * @param {Object2D|*} object
      */
@@ -109,6 +115,8 @@ export class Group extends Object2D
 
     update()
     {
+        this.sortByDepth();
+
         for (let i in this.objects) {
             this.objects[i].update();
         }

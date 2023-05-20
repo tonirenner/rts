@@ -102,9 +102,10 @@ export class BeamState extends State
 
 export class LaserBeamProjectile extends Projectile
 {
-    /**
-     * @type {Turret}
-     */
+    /** @type {number} */
+    depth = 2;
+
+    /** @type {Turret} */
     turret;
 
     /**

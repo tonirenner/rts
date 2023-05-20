@@ -33,7 +33,7 @@ export class HealthBar extends Rectangle
     {
         this.position.x += this.offset.x;
         this.position.y += this.offset.y;
-        this.dimension.x = (this.computedHealthRatio() * 20) | 0;
+        this.dimension.x = (this.computedHealthRatio() * 10) | 0;
         this.dimension.y = 2;
     }
 

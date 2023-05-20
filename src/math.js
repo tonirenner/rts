@@ -12,8 +12,8 @@ export class Vec2
      */
     constructor(x = 0, y = 0)
     {
-        this.x = x;
-        this.y = y;
+        this.x = isNaN(x) ? 0 : x;
+        this.y = isNaN(y) ? 0 : y;
     }
 
     /**
@@ -179,9 +179,9 @@ export class Vec3
      */
     constructor(x = 0, y = 0, z = 0)
     {
-        this.x = x;
-        this.y = y;
-        this.z = z;
+        this.x = isNaN(x) ? 0 : x;
+        this.y = isNaN(y) ? 0 : y;
+        this.z = isNaN(z) ? 0 : z;
     }
 
     /**
@@ -224,6 +224,14 @@ export class Vec3
     length()
     {
         return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z);
+    }
+
+    /**
+     * @returns {Vec3}
+     */
+    normalize()
+    {
+        return (new Vec3(this.x, this.y, this.z)).divideScalar(this.length() || 1);
     }
 
     /**
@@ -271,6 +279,15 @@ export class Vec3
         return new Vec3(this.x * v.x, this.y * v.y, this.z * v.z);
     }
 
+    /**
+     * @param {Vec3} v
+     * @returns {Vec3}
+     */
+    divide(v)
+    {
+        return new Vec3(this.x / v.x, this.y / v.y, this.z / v.z);
+    }
+
 
     /**
      * @param {number} s
@@ -296,7 +313,7 @@ export class Vec3
      */
     divideScalar(s)
     {
-        return new Vec3(this.x / s, this.y / s, this.z / s);
+        return this.multiplyScalar(1 / s);
     }
 
     /**
@@ -308,6 +325,89 @@ export class Vec3
         return new Vec3(this.x * s, this.y * s, this.z * s);
     }
 
+}
+
+export class Vec4
+{
+    /** @type {number} */
+    x;
+
+    /** @type {number} */
+    y;
+
+    /** @type {number} */
+    z;
+
+    /** @type {number} */
+    w;
+
+    /**
+     * @param {number} x
+     * @param {number} y
+     * @param {number} z
+     * @param {number} w
+     */
+    constructor(x = 0, y = 0, z = 0, w = 0)
+    {
+        this.x = isNaN(x) ? 0 : x;
+        this.y = isNaN(y) ? 0 : y;
+        this.z = isNaN(z) ? 0 : z;
+        this.w = isNaN(w) ? 0 : w;
+    }
+
+    /**
+     * @param {number} s
+     * @returns {Vec4}
+     */
+    static fromScalar(s)
+    {
+        return new Vec4(s, s, s, s);
+    }
+
+    /**
+     * @param {number} w
+     * @param {Vec3} v
+     */
+    static fromVec3(v, w = 0)
+    {
+        return new Vec4(v.x, v.y, v.z, w);
+    }
+
+    /**
+     * @param {Vec4} v
+     * @returns {Vec4}
+     */
+    add(v)
+    {
+        return new Vec4(this.x + v.x, this.y + v.y, this.z + v.z, this.w + v.w);
+    }
+
+    /**
+     * @param {number} s
+     * @returns {Vec4}
+     */
+    addScalar(s)
+    {
+        return new Vec4(this.x + s, this.y + s, this.z + s, this.w + s);
+    }
+
+    /**
+     * @param {number} s
+     * @returns {Vec4}
+     */
+    divideScalar(s)
+    {
+        return new Vec4(this.x / s, this.y / s, this.z / s, this.w / s);
+    }
+
+    /**
+     * @param {number} s
+     * @returns {Vec4}
+     */
+    multiplyScalar(s)
+    {
+        return new Vec4(this.x * s, this.y * s, this.z * s, this.w * s);
+    }
 }
 
 export class Distance2
@@ -354,7 +454,7 @@ export class FloatingOrigin
     /**
      * @type {number}
      */
-    maxScale        = 50;
+    maxScale        = 10;
 
     /**
      * @param {Vec2} offset

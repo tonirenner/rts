@@ -101,6 +101,9 @@ export class TravelState extends State
 
 export class Projectile extends Entity
 {
+    /** @type {number} */
+    depth = 2;
+
     /**
      * @param {Player|*} player
      */

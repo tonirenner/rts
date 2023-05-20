@@ -36,6 +36,11 @@ export class Canvas
         this.screen     = screen;
         this.context    = screen.getContext('2d');
         this.projection = new Projection();
+
+        this.context.imageSmoothingEnabled    = false;
+        this.context.imageSmoothingQuality    = 'high';
+        this.context.globalCompositeOperation = 'destination-in';
+        this.context.globalAlpha              = 0;
     }
 
     /**

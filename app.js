@@ -13,12 +13,14 @@ import {LockOnTargetCommand, MoveCommand} from './src/game/command.js';
 import {AUDIO_COMMANDS} from './src/game/audio.js';
 
 
-const debug = document.querySelector('.app > .debug');
+const debug  = document.querySelector('.app > .debug');
+const screen = document.querySelector('.app > canvas');
+
 
 const formation   = new SquareFormation();
 const canvas      = new Canvas2D(document.querySelector('.app > canvas'));
-canvas.width      = 1024;
-canvas.height     = 768;
+canvas.width      = screen.clientWidth;
+canvas.height     = screen.clientHeight;
 canvas.clearColor = 'rgb(28,26,26)';
 
 
@@ -54,13 +56,13 @@ universe.player.add(yourVessel2);
 enemyPlayer.add(enemyVessel);
 
 const star        = new Star(universe.player);
-const planet      = new Planet(universe.player);
+const planet      = new Planet(universe.player, 'p01');
 planet.position.x = 200;
 planet.position.y = -300;
 universe.add(star);
 universe.add(planet);
 
-universe.debug = true;
+universe.debug = false;
 
 canvas.resize();
 

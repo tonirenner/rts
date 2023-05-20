@@ -1,4 +1,4 @@
-import {Vec2, Vec3} from '../src/math.js';
+import {Vec2, Vec3, Vec4} from '../src/math.js';
 
 /**
  * @param {number} x
@@ -42,6 +42,27 @@ export const vec3s = (s = 0) => {
 /**
  * @param {number} x
  * @param {number} y
+ * @param {number} z
+ * @param {number} w
+ *
+ * @returns {Vec4}
+ */
+export const vec4 = (x = 0, y = 0, z = 0, w = 0) => {
+    return new Vec4(x, y, z, w);
+};
+
+/**
+ * @param {number} s
+ *
+ * @returns {Vec4}
+ */
+export const vec4s = (s = 0) => {
+    return Vec4.fromScalar(s);
+};
+
+/**
+ * @param {number} x
+ * @param {number} y
  *
  * @returns {number}
  */
@@ -50,23 +71,23 @@ export const pow = (x, y) => {
 };
 
 /**
- * @param {Vec2} a
- * @param {Vec2} b
+ * @param {Vec2} x
+ * @param {number} y
  *
  * @returns {Vec2}
  */
-export const pow2 = (a, b) => {
-    return new Vec2(pow(a.x, b.x), pow(a.y, b.y));
+export const pow2 = (x, y) => {
+    return new Vec2(pow(x.x, y), pow(x.y, y));
 };
 
 /**
- * @param {Vec3} a
- * @param {Vec3} b
+ * @param {Vec3} x
+ * @param {number} y
  *
  * @returns {Vec3}
  */
-export const pow3 = (a, b) => {
-    return new Vec3(pow(a.x, b.x), pow(a.y, b.y), pow(a.z, b.z));
+export const pow3 = (x, y) => {
+    return new Vec3(pow(x.x, y), pow(x.y, y), pow(x.z, y));
 };
 
 /**
@@ -215,7 +236,7 @@ export const fract3 = v => {
  * @returns {number}
  */
 export const clamp = (x, min, max) => {
-    return Math.max(x, Math.min(min, max));
+    return Math.min(Math.max(x, min), max);
 };
 
 /**
@@ -228,6 +249,31 @@ export const abs = (x) => {
 };
 
 /**
+ * @param {Vec2} v
+ *
+ * @returns {Vec2}
+ */
+export const abs2 = (v) => {
+    return new Vec2(
+        abs(v.x),
+        abs(v.y)
+    );
+};
+
+/**
+ * @param {Vec3} v
+ *
+ * @returns {Vec3}
+ */
+export const abs3 = (v) => {
+    return new Vec3(
+        abs(v.x),
+        abs(v.y),
+        abs(v.z)
+    );
+};
+
+/**
  * @param {number} x
  * @param {number} y
  * @param {number} a
@@ -236,6 +282,20 @@ export const abs = (x) => {
  */
 export const mix = (x, y, a) => {
     return x * (1 - a) + y * a;
+};
+
+/**
+ * @param {Vec3} x
+ * @param {Vec3} y
+ * @param {number} a
+ * @returns {Vec3}
+ */
+export const mix3 = (x, y, a) => {
+    return vec3(
+        x.x * (1 - a) + y.x * a,
+        x.y * (1 - a) + y.y * a,
+        x.z * (1 - a) + y.z * a
+    );
 };
 
 /**
@@ -292,8 +352,17 @@ export const dot2 = (a, b) => {
  * @param {Vec3} b
  * @returns {number}
  */
-export const dot = (a, b) => {
+export const dot3 = (a, b) => {
     return a.dot(b);
+};
+
+/**
+ * @param {Vec2} a
+ * @param {Vec2} b
+ * @returns {number}
+ */
+export const distance2 = (a, b) => {
+    return a.subtract(b).length();
 };
 
 /**
@@ -315,6 +384,98 @@ export const length3 = v => {
 };
 
 /**
+ * @param {Vec3} v
+ *
+ * @returns {Vec3}
+ */
+export const normalize3 = v => {
+    return v.normalize();
+};
+
+
+/**
+ * @param {number} n
+ * @returns {number}
+ */
+export const exp = n => {
+    return Math.exp(n);
+};
+
+/**
+ * @param {Vec2} v
+ * @returns {Vec2}
+ */
+export const exp2 = v => {
+    return new Vec2(
+        exp(v.x),
+        exp(v.y)
+    );
+};
+
+/**
+ * @param {Vec3} v
+ * @returns {Vec3}
+ */
+export const exp3 = v => {
+    return new Vec3(
+        exp(v.x),
+        exp(v.y),
+        exp(v.z)
+    );
+};
+
+/**
+ * @param {number} n
+ * @returns {number}
+ */
+export const pow2x = n => {
+    return 2 ** n;
+};
+
+/**
+ *
+ * @param {number} x
+ * @returns {number}
+ */
+export const rand = x => {
+    return fract(sin(x * 91.3458) * 47453.5453);
+};
+
+/**
+ * @param {Vec2} v
+ * @returns {number}
+ */
+export const rand2 = v => {
+    return fract(sin(dot2(v, vec2(12.9898, 78.233))) * 43758.5453);
+};
+
+/**
+ * @param {Vec3} v
+ * @returns {number}
+ */
+export const rand3 = v => {
+    return rand2(vec2(v.x, v.y).addScalar(rand(v.z)));
+};
+
+/**
+ * @param {number} x
+ * @returns {number}
+ */
+export const smoothstep = x => {
+    return x * x * (3.0 - 2.0 * x);
+};
+
+/**
+ * @param {number} a
+ * @param {number} b
+ * @param {number} x
+ * @returns {number}
+ */
+export const smoothstep3 = (a, b, x) => {
+    return smoothstep(clamp((x - a) / (b - a), 0, 1));
+};
+
+/**
  * @param {number} r
  * @param {number} g
  * @param {number} b
@@ -328,4 +489,21 @@ export const rgba = (r, g, b, a) => {
     a = clamp(a, 0.0, 1.0);
 
     return `rgba(${r},${g},${b},${a.toFixed(2)})`;
+};
+
+/**
+ * @param {Vec3} v
+ * @param {number} a
+ * @returns {string}
+ */
+export const rgba3 = (v, a) => {
+    return rgba(v.x, v.y, v.z, a);
+};
+
+/**
+ * @param {Vec4} v
+ * @returns {string}
+ */
+export const rgba4 = (v) => {
+    return rgba(v.x, v.y, v.z, v.w);
 };

@@ -5,17 +5,21 @@
     <title>Shader (CPU)</title>
 </head>
 <body>
-<canvas width="1024" height="768"></canvas>
+<!--<canvas width="768" height="768"></canvas>-->
+<!--<canvas width="512" height="512"></canvas>-->
+<canvas width="256" height="256"></canvas>
+<!--<canvas width="128" height="128"></canvas>-->
 <script type="module">
 
     import {Vec2} from '../src/math.js';
-    import StarsShader from './stars.js';
+    import RayMarchingExampleShader from './ray_marching_example.js';
 
-    const canvas  = document.querySelector('canvas');
-    const context = canvas.getContext('2d');
+    const canvas                  = document.querySelector('canvas');
+    const context                 = canvas.getContext('2d');
+    context.imageSmoothingEnabled = true;
     context.imageSmoothingQuality = 'high';
 
-    context.fillStyle = 'rgb(0,0,0)';
+    context.fillStyle = 'rgba(0,0,0,0)';
     context.fillRect(0, 0, canvas.width, canvas.height);
 
     function pixel(x, y, color)
@@ -24,7 +28,8 @@
         context.fillRect(x, y, 1, 1);
     }
 
-    const shader = new StarsShader(canvas.width, canvas.height);
+    //const shader = new StarsShader(canvas.width, canvas.height);
+    const shader = new RayMarchingExampleShader(canvas.width, canvas.height);
 
     const coordinates = new Vec2();
     for (coordinates.y = 0; coordinates.y < canvas.height; coordinates.y++) {
